@@ -1,0 +1,17 @@
+# dependencies — JANGAN pernah upload folder ini ke GitHub
+node_modules/
+
+# build output
+.next/
+out/
+
+# env — berisi kunci rahasia, JANGAN di-upload
+.env
+.env.local
+.env*.local
+
+# misc
+.DS_Store
+*.log
+.vercel
+tsconfig.tsbuildinfo
