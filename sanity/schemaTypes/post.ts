@@ -59,6 +59,31 @@ export const post = defineType({
         {
           type: "code",
         },
+        {
+          type: "object",
+          name: "canvaEmbed",
+          title: "Canva (slide/desain)",
+          fields: [
+            defineField({
+              name: "url",
+              title:
+                "Link Canva — Share → set 'Anyone with the link can view' → salin link",
+              type: "url",
+              validation: (r) =>
+                r.required().custom((val: string | undefined) =>
+                  val && val.includes("canva.com/design/")
+                    ? true
+                    : "Harus link desain Canva (canva.com/design/…)"
+                ),
+            }),
+          ],
+          preview: {
+            select: { url: "url" },
+            prepare({ url }: { url?: string }) {
+              return { title: "🎨 Canva embed", subtitle: url };
+            },
+          },
+        },
       ],
     }),
   ],
