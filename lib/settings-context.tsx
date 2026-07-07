@@ -12,14 +12,18 @@ import { dict, type DictKey, type Lang } from "./i18n";
 export type Mode = "light" | "dark" | "system";
 export type Accent = "blue" | "teal" | "amber" | "rose" | "mono";
 export type TextSize = "s" | "m" | "l";
+export type ZhFont = "kai" | "hand" | "cute";
+export type PetColor = "theme" | "orange" | "black" | "white" | "pink" | "gray";
 
 interface Settings {
   lang: Lang;
   mode: Mode;
   accent: Accent;
   pet: boolean;
+  petColor: PetColor;
   textSize: TextSize;
   reduceMotion: boolean;
+  zhFont: ZhFont;
 }
 
 interface SettingsCtx extends Settings {
@@ -30,6 +34,8 @@ interface SettingsCtx extends Settings {
   setPet: (p: boolean) => void;
   setTextSize: (s: TextSize) => void;
   setReduceMotion: (r: boolean) => void;
+  setZhFont: (f: ZhFont) => void;
+  setPetColor: (c: PetColor) => void;
   reset: () => void;
 }
 
@@ -38,8 +44,10 @@ const DEFAULTS: Settings = {
   mode: "system",
   accent: "blue",
   pet: true,
+  petColor: "theme",
   textSize: "m",
   reduceMotion: false,
+  zhFont: "kai",
 };
 const STORAGE_KEY = "peini-settings";
 
@@ -52,6 +60,8 @@ const Ctx = createContext<SettingsCtx>({
   setPet: () => {},
   setTextSize: () => {},
   setReduceMotion: () => {},
+  setZhFont: () => {},
+  setPetColor: () => {},
   reset: () => {},
 });
 
@@ -65,6 +75,8 @@ function apply(s: Settings) {
   root.classList.toggle("reduce-motion", s.reduceMotion);
   root.setAttribute("data-accent", s.accent);
   root.setAttribute("data-textsize", s.textSize);
+  root.setAttribute("data-zhfont", s.zhFont);
+  root.setAttribute("data-petcolor", s.petColor);
   root.setAttribute("lang", s.lang === "zh" ? "zh-CN" : "en");
 }
 
@@ -116,6 +128,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     setPet: (pet) => update({ pet }),
     setTextSize: (textSize) => update({ textSize }),
     setReduceMotion: (reduceMotion) => update({ reduceMotion }),
+    setZhFont: (zhFont) => update({ zhFont }),
+    setPetColor: (petColor) => update({ petColor }),
     reset: () => update({ ...DEFAULTS }),
   };
 
