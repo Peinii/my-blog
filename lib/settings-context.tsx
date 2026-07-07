@@ -8,6 +8,11 @@ import {
   type ReactNode,
 } from "react";
 import { dict, type DictKey, type Lang } from "./i18n";
+import {
+  pickLocalized,
+  type SiteContent,
+  type LocalizedString,
+} from "./site-content";
 
 export type Mode = "light" | "dark" | "system";
 export type Accent = "blue" | "teal" | "amber" | "rose" | "mono";
@@ -28,6 +33,9 @@ interface Settings {
 
 interface SettingsCtx extends Settings {
   t: (key: DictKey) => string;
+  /** Teks dari Sanity Site Settings; fallback ke teks bawaan (dict). */
+  ct: (field: LocalizedString | undefined, dictKey: DictKey) => string;
+  content: SiteContent | null;
   setLang: (l: Lang) => void;
   setMode: (m: Mode) => void;
   setAccent: (a: Accent) => void;
@@ -54,6 +62,8 @@ const STORAGE_KEY = "peini-settings";
 const Ctx = createContext<SettingsCtx>({
   ...DEFAULTS,
   t: (k) => dict.en[k],
+  ct: (_f, k) => dict.en[k],
+  content: null,
   setLang: () => {},
   setMode: () => {},
   setAccent: () => {},
@@ -80,7 +90,13 @@ function apply(s: Settings) {
   root.setAttribute("lang", s.lang === "zh" ? "zh-CN" : "en");
 }
 
-export function SettingsProvider({ children }: { children: ReactNode }) {
+export function SettingsProvider({
+  children,
+  siteContent = null,
+}: {
+  children: ReactNode;
+  siteContent?: SiteContent | null;
+}) {
   const [settings, setSettings] = useState<Settings>(DEFAULTS);
 
   // Muat pilihan tersimpan saat pertama kali render di browser.
@@ -122,6 +138,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const value: SettingsCtx = {
     ...settings,
     t: (key) => dict[settings.lang][key] ?? dict.en[key],
+    ct: (field, dictKey) =>
+      pickLocalized(field, settings.lang) ??
+      (dict[settings.lang][dictKey] || dict.en[dictKey]),
+    content: siteContent,
     setLang: (lang) => update({ lang }),
     setMode: (mode) => update({ mode }),
     setAccent: (accent) => update({ accent }),
