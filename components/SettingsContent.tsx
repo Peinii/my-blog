@@ -6,6 +6,8 @@ import {
   type Accent,
   type Mode,
   type TextSize,
+  type ZhFont,
+  type PetColor,
 } from "@/lib/settings-context";
 import type { Lang } from "@/lib/i18n";
 import Reveal from "./Reveal";
@@ -43,14 +45,18 @@ export default function SettingsContent() {
     mode,
     accent,
     pet,
+    petColor,
     textSize,
     reduceMotion,
+    zhFont,
     setLang,
     setMode,
     setAccent,
     setPet,
+    setPetColor,
     setTextSize,
     setReduceMotion,
+    setZhFont,
     reset,
   } = useSettings();
   const [resetDone, setResetDone] = useState(false);
@@ -68,6 +74,19 @@ export default function SettingsContent() {
     { id: "s", label: t("settings.textSize.s") },
     { id: "m", label: t("settings.textSize.m") },
     { id: "l", label: t("settings.textSize.l") },
+  ];
+  const zhFonts: { id: ZhFont; sample: string; cls: string }[] = [
+    { id: "kai", sample: "你好呀", cls: "zhfont-sample-kai" },
+    { id: "hand", sample: "你好呀", cls: "zhfont-sample-hand" },
+    { id: "cute", sample: "你好呀", cls: "zhfont-sample-cute" },
+  ];
+  const petColors: { id: PetColor; hex: string }[] = [
+    { id: "theme", hex: "" },
+    { id: "orange", hex: "#f59e42" },
+    { id: "black", hex: "#4b4b57" },
+    { id: "white", hex: "#efe7da" },
+    { id: "pink", hex: "#f6a5c0" },
+    { id: "gray", hex: "#9aa2af" },
   ];
 
   function onReset() {
@@ -184,6 +203,60 @@ export default function SettingsContent() {
               <button onClick={() => setPet(false)} className={btn(!pet)}>
                 {t("settings.pet.off")}
               </button>
+            </div>
+
+            {/* Warna pet */}
+            {pet && (
+              <div className="mt-5">
+                <p className="mb-3 text-sm font-medium text-gray-600 dark:text-gray-300">
+                  {t("settings.petColor")}{" "}
+                  <span className="font-normal text-gray-400">
+                    — {t("settings.petColor.desc")}
+                  </span>
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  {petColors.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => setPetColor(c.id)}
+                      aria-label={c.id}
+                      className="flex flex-col items-center gap-1.5"
+                    >
+                      <span
+                        className={`h-9 w-9 rounded-full transition-transform hover:scale-110 ${
+                          petColor === c.id
+                            ? "ring-2 ring-accent ring-offset-2 dark:ring-offset-gray-900"
+                            : ""
+                        }`}
+                        style={
+                          c.id === "theme"
+                            ? { backgroundColor: "var(--accent)" }
+                            : { backgroundColor: c.hex }
+                        }
+                      />
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {t(`settings.petColor.${c.id}` as any)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </Section>
+
+          {/* Font Mandarin */}
+          <Section title={t("settings.zhFont")} desc={t("settings.zhFont.desc")}>
+            <div className="flex flex-wrap gap-3">
+              {zhFonts.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => setZhFont(f.id)}
+                  className={btn(zhFont === f.id)}
+                >
+                  <span className={`${f.cls} mr-1.5 text-lg`}>{f.sample}</span>
+                  {t(`settings.zhFont.${f.id}` as any)}
+                </button>
+              ))}
             </div>
           </Section>
 
