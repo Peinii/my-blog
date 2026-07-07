@@ -7,8 +7,8 @@ import {
   type Mode,
   type TextSize,
   type ZhFont,
-  type PetColor,
 } from "@/lib/settings-context";
+import { PETS, getPetDef, type PetType } from "@/lib/pets";
 import type { Lang } from "@/lib/i18n";
 import Reveal from "./Reveal";
 
@@ -45,6 +45,7 @@ export default function SettingsContent() {
     mode,
     accent,
     pet,
+    petType,
     petColor,
     textSize,
     reduceMotion,
@@ -53,6 +54,7 @@ export default function SettingsContent() {
     setMode,
     setAccent,
     setPet,
+    setPetType,
     setPetColor,
     setTextSize,
     setReduceMotion,
@@ -80,14 +82,21 @@ export default function SettingsContent() {
     { id: "hand", sample: "你好呀", cls: "zhfont-sample-hand" },
     { id: "cute", sample: "你好呀", cls: "zhfont-sample-cute" },
   ];
-  const petColors: { id: PetColor; hex: string }[] = [
-    { id: "theme", hex: "" },
-    { id: "orange", hex: "#f59e42" },
-    { id: "black", hex: "#4b4b57" },
-    { id: "white", hex: "#efe7da" },
-    { id: "pink", hex: "#f6a5c0" },
-    { id: "gray", hex: "#9aa2af" },
-  ];
+  const petDef = getPetDef(petType);
+  const petTypes = Object.values(PETS) as (typeof petDef)[];
+
+  function swatchStyle(c: (typeof petDef.colors)[number]): React.CSSProperties {
+    if (!c.swatch || c.swatch.length === 0)
+      return { backgroundColor: "var(--accent)" };
+    if (c.swatch.length === 1) return { backgroundColor: c.swatch[0] };
+    if (c.swatch.length === 2)
+      return {
+        backgroundImage: `linear-gradient(135deg, ${c.swatch[0]} 55%, ${c.swatch[1]} 55%)`,
+      };
+    return {
+      backgroundImage: `linear-gradient(135deg, ${c.swatch[0]} 45%, ${c.swatch[1]} 45%, ${c.swatch[1]} 72%, ${c.swatch[2]} 72%)`,
+    };
+  }
 
   function onReset() {
     reset();
@@ -205,42 +214,62 @@ export default function SettingsContent() {
               </button>
             </div>
 
-            {/* Warna pet */}
             {pet && (
-              <div className="mt-5">
-                <p className="mb-3 text-sm font-medium text-gray-600 dark:text-gray-300">
-                  {t("settings.petColor")}{" "}
-                  <span className="font-normal text-gray-400">
-                    — {t("settings.petColor.desc")}
-                  </span>
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  {petColors.map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() => setPetColor(c.id)}
-                      aria-label={c.id}
-                      className="flex flex-col items-center gap-1.5"
-                    >
-                      <span
-                        className={`h-9 w-9 rounded-full transition-transform hover:scale-110 ${
-                          petColor === c.id
-                            ? "ring-2 ring-accent ring-offset-2 dark:ring-offset-gray-900"
-                            : ""
-                        }`}
-                        style={
-                          c.id === "theme"
-                            ? { backgroundColor: "var(--accent)" }
-                            : { backgroundColor: c.hex }
-                        }
-                      />
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {t(`settings.petColor.${c.id}` as any)}
-                      </span>
-                    </button>
-                  ))}
+              <>
+                {/* Jenis pet */}
+                <div className="mt-5">
+                  <p className="mb-3 text-sm font-medium text-gray-600 dark:text-gray-300">
+                    {t("settings.petType")}{" "}
+                    <span className="font-normal text-gray-400">
+                      — {t("settings.petType.desc")}
+                    </span>
+                  </p>
+                  <div className="flex flex-wrap gap-2.5">
+                    {petTypes.map((p) => (
+                      <button
+                        key={p.id}
+                        onClick={() => setPetType(p.id as PetType)}
+                        className={btn(petType === p.id)}
+                      >
+                        <span className="mr-1 text-base">{p.emoji}</span>
+                        {lang === "zh" ? p.zh : p.en}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+
+                {/* Warna / ras */}
+                <div className="mt-5">
+                  <p className="mb-3 text-sm font-medium text-gray-600 dark:text-gray-300">
+                    {t("settings.petColor")}{" "}
+                    <span className="font-normal text-gray-400">
+                      — {t("settings.petColor.desc")}
+                    </span>
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    {petDef.colors.map((c) => (
+                      <button
+                        key={c.id}
+                        onClick={() => setPetColor(c.id)}
+                        aria-label={c.en}
+                        className="flex w-16 flex-col items-center gap-1.5"
+                      >
+                        <span
+                          className={`h-9 w-9 rounded-full border border-black/5 transition-transform hover:scale-110 dark:border-white/10 ${
+                            petColor === c.id
+                              ? "ring-2 ring-accent ring-offset-2 dark:ring-offset-gray-900"
+                              : ""
+                          }`}
+                          style={swatchStyle(c)}
+                        />
+                        <span className="text-center text-xs leading-tight text-gray-500 dark:text-gray-400">
+                          {lang === "zh" ? c.zh : c.en}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
             )}
           </Section>
 
