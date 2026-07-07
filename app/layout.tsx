@@ -4,6 +4,7 @@ import { SettingsProvider } from "@/lib/settings-context";
 import { siteUrl } from "@/lib/sanity.env";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Pet from "@/components/Pet";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -18,6 +19,13 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: "Peini's Blog",
     type: "website",
+  },
+  // Minta mesin pencari (Google dll.) untuk TIDAK mengindex blog ini.
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: { index: false, follow: false },
   },
 };
 
@@ -41,6 +49,11 @@ export default function RootLayout({
     <html lang="en" data-accent="blue" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        {/* Font kaiti untuk mode 中文 — dimuat per-potongan (ringan) */}
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css"
+        />
       </head>
       <body className="flex min-h-screen flex-col">
         <SettingsProvider>
@@ -49,6 +62,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <Pet />
         </SettingsProvider>
       </body>
     </html>

@@ -75,6 +75,133 @@ body {
   }
 }
 
+/* ===== Font Mandarin (LXGW WenKai — gaya kaiti, open source) ===== */
+html[lang="zh-CN"] body,
+html[lang="zh-CN"] input,
+html[lang="zh-CN"] button {
+  font-family: "LXGW WenKai", ui-sans-serif, system-ui, -apple-system,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* ===== Pet kucing 🐱 ===== */
+.pet-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+  will-change: transform;
+}
+.pet-cat {
+  transition: transform 0.25s ease;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.18));
+}
+.pet-flip {
+  transform: scaleX(-1);
+}
+.pet-cat .pet-eyes {
+  animation: pet-blink 4.2s infinite;
+  transform-origin: 32px 27px;
+}
+.pet-cat .pet-eyes-closed {
+  opacity: 0;
+}
+.pet-sleep .pet-eyes {
+  opacity: 0;
+}
+.pet-sleep .pet-eyes-closed {
+  opacity: 1;
+}
+.pet-cat .pet-tail {
+  animation: pet-tail 2.6s ease-in-out infinite;
+  transform-origin: 50px 46px;
+}
+@keyframes pet-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.08); }
+}
+@keyframes pet-tail {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(14deg); }
+}
+.pet-bubble {
+  position: absolute;
+  top: -26px;
+  left: 46px;
+  white-space: nowrap;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px 999px 999px 4px;
+  animation: pet-pop 0.25s ease;
+}
+.pet-zzz {
+  position: absolute;
+  top: -14px;
+  left: 44px;
+  font-size: 12px;
+  color: var(--accent);
+  animation: pet-float 1.8s ease-in-out infinite;
+}
+.pet-heart {
+  position: absolute;
+  top: -6px;
+  left: 24px;
+  color: #fb7192;
+  font-size: 16px;
+  pointer-events: none;
+  animation: pet-heart-up 1.1s ease-out forwards;
+}
+@keyframes pet-pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes pet-float {
+  0%, 100% { transform: translateY(0); opacity: 0.9; }
+  50% { transform: translateY(-6px); opacity: 0.5; }
+}
+@keyframes pet-heart-up {
+  from { transform: translateY(0) scale(0.6); opacity: 1; }
+  to { transform: translateY(-44px) scale(1.25); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pet-cat .pet-eyes,
+  .pet-cat .pet-tail,
+  .pet-zzz {
+    animation: none;
+  }
+}
+
+/* ===== Sparkle di hero ===== */
+.sparkle {
+  position: absolute;
+  color: var(--accent);
+  opacity: 0.7;
+  animation: sparkle-tw 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sparkle-tw {
+  0%, 100% { transform: scale(0.6) rotate(0deg); opacity: 0.25; }
+  50% { transform: scale(1.15) rotate(20deg); opacity: 0.9; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sparkle { animation: none; }
+}
+
+/* ===== Tag gaya stiker ===== */
+.tag-sticker {
+  border: 1.5px solid var(--accent);
+  box-shadow: 1.5px 1.5px 0 var(--accent);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.tag-sticker:hover {
+  transform: rotate(-2deg) translateY(-1px);
+  box-shadow: 2.5px 2.5px 0 var(--accent);
+}
+
 /* ===== Isi artikel (Portable Text) ===== */
 .prose-article h2 {
   @apply mt-8 mb-3 text-2xl font-bold;

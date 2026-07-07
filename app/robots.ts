@@ -1,13 +1,13 @@
 import type { MetadataRoute } from "next";
-import { siteUrl } from "@/lib/sanity.env";
 
+// Blog ini sengaja TIDAK diindex mesin pencari (permintaan pemilik).
+// Untuk mengizinkan Google mengindex lagi: kembalikan allow "/" dan
+// hapus blok "robots" di app/layout.tsx.
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      allow: "/",
-      disallow: ["/studio"],
+      disallow: "/",
     },
-    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }
