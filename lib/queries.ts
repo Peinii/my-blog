@@ -68,6 +68,41 @@ export async function getPost(slug: string): Promise<Post | null> {
   }
 }
 
+// Artikel dengan tag yang sama (untuk "You might also like").
+// Kalau tidak ada yang cocok, isi dengan artikel terbaru lain.
+export async function getRelatedPosts(
+  slug: string,
+  tagSlugs: string[],
+  limit = 3
+): Promise<Post[]> {
+  try {
+    let related: Post[] = [];
+    if (tagSlugs.length > 0) {
+      related = await client.fetch(
+        groq`*[_type == "post" && slug.current != $slug && defined(slug.current)
+          && count((tags[]->slug.current)[@ in $tagSlugs]) > 0]
+          | order(publishedAt desc)[0...$limit] ${postFields}`,
+        { slug, tagSlugs, limit }
+      );
+    }
+    if (related.length < limit) {
+      const fill: Post[] = await client.fetch(
+        groq`*[_type == "post" && slug.current != $slug && defined(slug.current)]
+          | order(publishedAt desc)[0...$limit] ${postFields}`,
+        { slug, limit }
+      );
+      const seen = new Set(related.map((p) => p._id));
+      for (const p of fill) {
+        if (related.length >= limit) break;
+        if (!seen.has(p._id)) related.push(p);
+      }
+    }
+    return related;
+  } catch {
+    return [];
+  }
+}
+
 export async function getAllSlugs(): Promise<string[]> {
   try {
     return await client.fetch(
