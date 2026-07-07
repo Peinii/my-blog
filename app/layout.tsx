@@ -41,6 +41,8 @@ try {
   if (s.reduceMotion) document.documentElement.classList.add('reduce-motion');
   document.documentElement.setAttribute('data-accent', s.accent || 'blue');
   document.documentElement.setAttribute('data-textsize', s.textSize || 'm');
+  document.documentElement.setAttribute('data-zhfont', s.zhFont || 'kai');
+  document.documentElement.setAttribute('data-petcolor', s.petColor || 'theme');
   if (s.lang === 'zh') document.documentElement.setAttribute('lang', 'zh-CN');
 } catch (e) {}
 `;
@@ -54,10 +56,21 @@ export default function RootLayout({
     <html lang="en" data-accent="blue" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
-        {/* Font kaiti untuk mode 中文 — dimuat per-potongan (ringan) */}
+        {/* Font untuk mode 中文 — semua di-split per-potongan glyph (ringan).
+            kai: LXGW WenKai · hand: Long Cang · cute: ZCOOL KuaiLe */}
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Long+Cang&family=ZCOOL+KuaiLe&display=swap"
         />
       </head>
       <body className="flex min-h-screen flex-col">

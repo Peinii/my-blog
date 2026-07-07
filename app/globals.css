@@ -46,6 +46,17 @@ html[data-accent="mono"] {
   --accent-soft: #1f2937;
 }
 
+/* ===== Warna pet (Settings) ===== */
+:root {
+  --pet-body: var(--accent);
+  --pet-ear: #ffb6c1;
+}
+html[data-petcolor="orange"] { --pet-body: #f59e42; --pet-ear: #ffd9b3; }
+html[data-petcolor="black"]  { --pet-body: #4b4b57; --pet-ear: #ffb6c1; }
+html[data-petcolor="white"]  { --pet-body: #efe7da; --pet-ear: #ffb6c1; }
+html[data-petcolor="pink"]   { --pet-body: #f6a5c0; --pet-ear: #ffe0ea; }
+html[data-petcolor="gray"]   { --pet-body: #9aa2af; --pet-ear: #ffc9d4; }
+
 html {
   scroll-behavior: smooth;
 }
@@ -106,13 +117,36 @@ body {
   }
 }
 
-/* ===== Font Mandarin (LXGW WenKai — gaya kaiti, open source) ===== */
+/* ===== Font Mandarin — 3 pilihan di Settings (semua open source) =====
+   kai  : LXGW WenKai (楷体 elegan — padanan gratis 云霆楷体)
+   hand : Long Cang (手写 tulisan tangan — padanan gratis 知秋手信)
+   cute : ZCOOL KuaiLe (ceria bulat — padanan gratis 浅夏体)          */
 html[lang="zh-CN"] body,
 html[lang="zh-CN"] input,
 html[lang="zh-CN"] button {
   font-family: "LXGW WenKai", ui-sans-serif, system-ui, -apple-system,
     "PingFang SC", "Microsoft YaHei", sans-serif;
 }
+html[lang="zh-CN"][data-zhfont="hand"] body,
+html[lang="zh-CN"][data-zhfont="hand"] input,
+html[lang="zh-CN"][data-zhfont="hand"] button {
+  font-family: "Long Cang", "LXGW WenKai", cursive, "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+}
+html[lang="zh-CN"][data-zhfont="hand"] body {
+  font-size: 1.06em;
+}
+html[lang="zh-CN"][data-zhfont="cute"] body,
+html[lang="zh-CN"][data-zhfont="cute"] input,
+html[lang="zh-CN"][data-zhfont="cute"] button {
+  font-family: "ZCOOL KuaiLe", "LXGW WenKai", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+}
+
+/* Sampel font di halaman Settings */
+.zhfont-sample-kai { font-family: "LXGW WenKai", sans-serif; }
+.zhfont-sample-hand { font-family: "Long Cang", cursive; }
+.zhfont-sample-cute { font-family: "ZCOOL KuaiLe", sans-serif; }
 
 /* ===== Pet kucing 🐱 ===== */
 .pet-wrap {
