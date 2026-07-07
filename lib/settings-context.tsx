@@ -16,6 +16,7 @@ interface Settings {
   lang: Lang;
   mode: Mode;
   accent: Accent;
+  pet: boolean;
 }
 
 interface SettingsCtx extends Settings {
@@ -23,9 +24,10 @@ interface SettingsCtx extends Settings {
   setLang: (l: Lang) => void;
   setMode: (m: Mode) => void;
   setAccent: (a: Accent) => void;
+  setPet: (p: boolean) => void;
 }
 
-const DEFAULTS: Settings = { lang: "en", mode: "light", accent: "blue" };
+const DEFAULTS: Settings = { lang: "en", mode: "light", accent: "blue", pet: true };
 const STORAGE_KEY = "peini-settings";
 
 const Ctx = createContext<SettingsCtx>({
@@ -34,6 +36,7 @@ const Ctx = createContext<SettingsCtx>({
   setLang: () => {},
   setMode: () => {},
   setAccent: () => {},
+  setPet: () => {},
 });
 
 function apply(s: Settings) {
@@ -79,6 +82,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     setLang: (lang) => update({ lang }),
     setMode: (mode) => update({ mode }),
     setAccent: (accent) => update({ accent }),
+    setPet: (pet) => update({ pet }),
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
