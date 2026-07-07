@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useSettings } from "@/lib/settings-context";
 
 export default function Navbar() {
-  const { t, lang, mode, setLang, setMode } = useSettings();
+  const { t, ct, content, lang, mode, setLang, setMode } = useSettings();
   const pathname = usePathname();
 
   // Sembunyikan navbar di halaman admin /studio
@@ -25,7 +25,7 @@ export default function Navbar() {
           href="/"
           className="text-lg font-bold tracking-tight transition-colors hover:text-accent"
         >
-          {t("site.title")}
+          {ct(content?.siteName, "site.title")}
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-2">

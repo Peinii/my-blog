@@ -7,7 +7,7 @@ import Reveal from "./Reveal";
 import type { Post } from "@/lib/queries";
 
 export default function HomeContent({ posts }: { posts: Post[] }) {
-  const { t } = useSettings();
+  const { t, ct, content } = useSettings();
 
   return (
     <div>
@@ -21,10 +21,10 @@ export default function HomeContent({ posts }: { posts: Post[] }) {
         <span className="sparkle left-[45%] top-0 text-xs [animation-delay:2s]" aria-hidden>✦</span>
         <Reveal>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            {t("home.hello")}
+            {ct(content?.heroTitle, "home.hello")}
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-gray-600 dark:text-gray-400">
-            {t("home.intro")}
+            {ct(content?.heroIntro, "home.intro")}
           </p>
         </Reveal>
       </section>
