@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllSlugs, getPost } from "@/lib/queries";
+import { getAllSlugs, getPost, getRelatedPosts } from "@/lib/queries";
 import { urlFor } from "@/lib/sanity.client";
+import { readingTimeMinutes } from "@/lib/reading-time";
 import PostView from "@/components/PostView";
+import RelatedPosts from "@/components/RelatedPosts";
+import ProgressBar from "@/components/ProgressBar";
 
 export const revalidate = 60;
 
@@ -40,5 +43,18 @@ export default async function PostPage({
 }) {
   const post = await getPost(params.slug);
   if (!post) notFound();
-  return <PostView post={post} />;
+
+  const related = await getRelatedPosts(
+    post.slug,
+    post.tags?.map((t) => t.slug) ?? []
+  );
+  const minutes = readingTimeMinutes(post.body);
+
+  return (
+    <>
+      <ProgressBar />
+      <PostView post={post} minutes={minutes} />
+      <RelatedPosts posts={related} />
+    </>
+  );
 }
