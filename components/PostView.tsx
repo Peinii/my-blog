@@ -39,7 +39,7 @@ export default function PostView({ post }: { post: Post }) {
               {post.tags.map((tag) => (
                 <span
                   key={tag.slug}
-                  className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-accent"
+                  className="tag-sticker rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-medium text-accent"
                 >
                   {tag.name}
                 </span>

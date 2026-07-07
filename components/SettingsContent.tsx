@@ -31,7 +31,8 @@ function Section({
 }
 
 export default function SettingsContent() {
-  const { t, lang, mode, accent, setLang, setMode, setAccent } = useSettings();
+  const { t, lang, mode, accent, pet, setLang, setMode, setAccent, setPet } =
+    useSettings();
 
   const langs: { id: Lang; label: string }[] = [
     { id: "en", label: "English" },
@@ -91,6 +92,18 @@ export default function SettingsContent() {
                   {m.icon} {m.label}
                 </button>
               ))}
+            </div>
+          </Section>
+
+          {/* Pet */}
+          <Section title={t("settings.pet")} desc={t("settings.pet.desc")}>
+            <div className="flex flex-wrap gap-3">
+              <button onClick={() => setPet(true)} className={btn(pet)}>
+                🐱 {t("settings.pet.on")}
+              </button>
+              <button onClick={() => setPet(false)} className={btn(!pet)}>
+                {t("settings.pet.off")}
+              </button>
             </div>
           </Section>
 

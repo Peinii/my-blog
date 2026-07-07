@@ -12,7 +12,13 @@ export default function HomeContent({ posts }: { posts: Post[] }) {
   return (
     <div>
       {/* Hero */}
-      <section className="py-12 text-center sm:py-16">
+      <section className="relative py-12 text-center sm:py-16">
+        {/* sparkles dekoratif */}
+        <span className="sparkle left-[12%] top-6 text-xl" aria-hidden>✦</span>
+        <span className="sparkle right-[15%] top-12 text-sm [animation-delay:0.8s]" aria-hidden>✦</span>
+        <span className="sparkle left-[22%] bottom-4 text-sm [animation-delay:1.4s]" aria-hidden>✧</span>
+        <span className="sparkle right-[24%] bottom-8 text-lg [animation-delay:0.4s]" aria-hidden>✧</span>
+        <span className="sparkle left-[45%] top-0 text-xs [animation-delay:2s]" aria-hidden>✦</span>
         <Reveal>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
             {t("home.hello")}
