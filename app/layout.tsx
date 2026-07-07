@@ -43,7 +43,6 @@ try {
   document.documentElement.setAttribute('data-accent', s.accent || 'blue');
   document.documentElement.setAttribute('data-textsize', s.textSize || 'm');
   document.documentElement.setAttribute('data-zhfont', s.zhFont || 'kai');
-  document.documentElement.setAttribute('data-petcolor', s.petColor || 'theme');
   if (s.lang === 'zh') document.documentElement.setAttribute('lang', 'zh-CN');
 } catch (e) {}
 `;

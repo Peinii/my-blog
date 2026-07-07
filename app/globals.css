@@ -46,16 +46,13 @@ html[data-accent="mono"] {
   --accent-soft: #1f2937;
 }
 
-/* ===== Warna pet (Settings) ===== */
+/* ===== Warna pet =====
+   Diatur per-jenis & per-ras lewat CSS variables inline dari lib/pets.ts.
+   Default di bawah hanya jaga-jaga. */
 :root {
   --pet-body: var(--accent);
   --pet-ear: #ffb6c1;
 }
-html[data-petcolor="orange"] { --pet-body: #f59e42; --pet-ear: #ffd9b3; }
-html[data-petcolor="black"]  { --pet-body: #4b4b57; --pet-ear: #ffb6c1; }
-html[data-petcolor="white"]  { --pet-body: #efe7da; --pet-ear: #ffb6c1; }
-html[data-petcolor="pink"]   { --pet-body: #f6a5c0; --pet-ear: #ffe0ea; }
-html[data-petcolor="gray"]   { --pet-body: #9aa2af; --pet-ear: #ffc9d4; }
 
 html {
   scroll-behavior: smooth;
@@ -159,18 +156,18 @@ html[lang="zh-CN"][data-zhfont="cute"] button {
   user-select: none;
   will-change: transform;
 }
-.pet-cat {
+.pet-svg {
   transition: transform 0.25s ease;
   filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.18));
 }
 .pet-flip {
   transform: scaleX(-1);
 }
-.pet-cat .pet-eyes {
+.pet-svg .pet-eyes {
   animation: pet-blink 4.2s infinite;
   transform-origin: 32px 27px;
 }
-.pet-cat .pet-eyes-closed {
+.pet-svg .pet-eyes-closed {
   opacity: 0;
 }
 .pet-sleep .pet-eyes {
@@ -179,9 +176,20 @@ html[lang="zh-CN"][data-zhfont="cute"] button {
 .pet-sleep .pet-eyes-closed {
   opacity: 1;
 }
-.pet-cat .pet-tail {
+.pet-svg .pet-tail {
   animation: pet-tail 2.6s ease-in-out infinite;
   transform-origin: 50px 46px;
+}
+/* blob: badan memantul kenyal */
+.pet-svg .pet-blob-body {
+  animation: pet-squish 2.4s ease-in-out infinite;
+}
+@keyframes pet-squish {
+  0%, 100% { transform: scaleY(1) scaleX(1); }
+  50% { transform: scaleY(0.94) scaleX(1.05); }
+}
+.pet-sleep .pet-blob-body {
+  animation: none;
 }
 @keyframes pet-blink {
   0%, 92%, 100% { transform: scaleY(1); }
@@ -233,8 +241,9 @@ html[lang="zh-CN"][data-zhfont="cute"] button {
   to { transform: translateY(-44px) scale(1.25); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pet-cat .pet-eyes,
-  .pet-cat .pet-tail,
+  .pet-svg .pet-eyes,
+  .pet-svg .pet-tail,
+  .pet-svg .pet-blob-body,
   .pet-zzz {
     animation: none;
   }
