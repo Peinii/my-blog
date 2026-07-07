@@ -18,14 +18,16 @@ export type Mode = "light" | "dark" | "system";
 export type Accent = "blue" | "teal" | "amber" | "rose" | "mono";
 export type TextSize = "s" | "m" | "l";
 export type ZhFont = "kai" | "hand" | "cute";
-export type PetColor = "theme" | "orange" | "black" | "white" | "pink" | "gray";
+export type { PetType } from "./pets";
+import type { PetType } from "./pets";
 
 interface Settings {
   lang: Lang;
   mode: Mode;
   accent: Accent;
   pet: boolean;
-  petColor: PetColor;
+  petType: PetType;
+  petColor: string;
   textSize: TextSize;
   reduceMotion: boolean;
   zhFont: ZhFont;
@@ -40,10 +42,11 @@ interface SettingsCtx extends Settings {
   setMode: (m: Mode) => void;
   setAccent: (a: Accent) => void;
   setPet: (p: boolean) => void;
+  setPetType: (p: PetType) => void;
   setTextSize: (s: TextSize) => void;
   setReduceMotion: (r: boolean) => void;
   setZhFont: (f: ZhFont) => void;
-  setPetColor: (c: PetColor) => void;
+  setPetColor: (c: string) => void;
   reset: () => void;
 }
 
@@ -52,6 +55,7 @@ const DEFAULTS: Settings = {
   mode: "system",
   accent: "blue",
   pet: true,
+  petType: "cat",
   petColor: "theme",
   textSize: "m",
   reduceMotion: false,
@@ -68,6 +72,7 @@ const Ctx = createContext<SettingsCtx>({
   setMode: () => {},
   setAccent: () => {},
   setPet: () => {},
+  setPetType: () => {},
   setTextSize: () => {},
   setReduceMotion: () => {},
   setZhFont: () => {},
@@ -86,7 +91,6 @@ function apply(s: Settings) {
   root.setAttribute("data-accent", s.accent);
   root.setAttribute("data-textsize", s.textSize);
   root.setAttribute("data-zhfont", s.zhFont);
-  root.setAttribute("data-petcolor", s.petColor);
   root.setAttribute("lang", s.lang === "zh" ? "zh-CN" : "en");
 }
 
@@ -146,6 +150,8 @@ export function SettingsProvider({
     setMode: (mode) => update({ mode }),
     setAccent: (accent) => update({ accent }),
     setPet: (pet) => update({ pet }),
+    // ganti jenis pet -> warna kembali ke "theme" agar selalu valid
+    setPetType: (petType) => update({ petType, petColor: "theme" }),
     setTextSize: (textSize) => update({ textSize }),
     setReduceMotion: (reduceMotion) => update({ reduceMotion }),
     setZhFont: (zhFont) => update({ zhFont }),
