@@ -50,6 +50,37 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ===== Ukuran teks artikel (Settings) ===== */
+html[data-textsize="s"] .prose-article {
+  font-size: 0.925rem;
+}
+html[data-textsize="m"] .prose-article {
+  font-size: 1rem;
+}
+html[data-textsize="l"] .prose-article {
+  font-size: 1.15rem;
+  line-height: 1.85;
+}
+
+/* ===== Kurangi animasi (Settings) ===== */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001s !important;
+}
+.reduce-motion {
+  scroll-behavior: auto;
+}
+.reduce-motion .sparkle {
+  display: none;
+}
+.reduce-motion .reveal {
+  opacity: 1;
+  transform: none;
+}
+
 body {
   @apply bg-white text-gray-800 antialiased transition-colors duration-300;
 }

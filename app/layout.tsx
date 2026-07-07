@@ -5,6 +5,7 @@ import { siteUrl } from "@/lib/sanity.env";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Pet from "@/components/Pet";
+import ScrollTopPaw from "@/components/ScrollTopPaw";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -34,8 +35,12 @@ export const metadata: Metadata = {
 const themeInit = `
 try {
   var s = JSON.parse(localStorage.getItem('peini-settings') || '{}');
-  if (s.mode === 'dark') document.documentElement.classList.add('dark');
+  var mode = s.mode || 'system';
+  var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  if (dark) document.documentElement.classList.add('dark');
+  if (s.reduceMotion) document.documentElement.classList.add('reduce-motion');
   document.documentElement.setAttribute('data-accent', s.accent || 'blue');
+  document.documentElement.setAttribute('data-textsize', s.textSize || 'm');
   if (s.lang === 'zh') document.documentElement.setAttribute('lang', 'zh-CN');
 } catch (e) {}
 `;
@@ -63,6 +68,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <Pet />
+          <ScrollTopPaw />
         </SettingsProvider>
       </body>
     </html>
