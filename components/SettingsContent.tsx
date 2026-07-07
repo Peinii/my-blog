@@ -1,6 +1,12 @@
 "use client";
 
-import { useSettings, type Accent, type Mode } from "@/lib/settings-context";
+import { useState } from "react";
+import {
+  useSettings,
+  type Accent,
+  type Mode,
+  type TextSize,
+} from "@/lib/settings-context";
 import type { Lang } from "@/lib/i18n";
 import Reveal from "./Reveal";
 
@@ -31,8 +37,23 @@ function Section({
 }
 
 export default function SettingsContent() {
-  const { t, lang, mode, accent, pet, setLang, setMode, setAccent, setPet } =
-    useSettings();
+  const {
+    t,
+    lang,
+    mode,
+    accent,
+    pet,
+    textSize,
+    reduceMotion,
+    setLang,
+    setMode,
+    setAccent,
+    setPet,
+    setTextSize,
+    setReduceMotion,
+    reset,
+  } = useSettings();
+  const [resetDone, setResetDone] = useState(false);
 
   const langs: { id: Lang; label: string }[] = [
     { id: "en", label: "English" },
@@ -41,7 +62,19 @@ export default function SettingsContent() {
   const modes: { id: Mode; label: string; icon: string }[] = [
     { id: "light", label: t("settings.light"), icon: "☀️" },
     { id: "dark", label: t("settings.dark"), icon: "🌙" },
+    { id: "system", label: t("settings.system"), icon: "💻" },
   ];
+  const sizes: { id: TextSize; label: string }[] = [
+    { id: "s", label: t("settings.textSize.s") },
+    { id: "m", label: t("settings.textSize.m") },
+    { id: "l", label: t("settings.textSize.l") },
+  ];
+
+  function onReset() {
+    reset();
+    setResetDone(true);
+    setTimeout(() => setResetDone(false), 2000);
+  }
 
   const btn = (active: boolean) =>
     `rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
@@ -95,6 +128,53 @@ export default function SettingsContent() {
             </div>
           </Section>
 
+          {/* Ukuran teks */}
+          <Section
+            title={t("settings.textSize")}
+            desc={t("settings.textSize.desc")}
+          >
+            <div className="flex flex-wrap gap-3">
+              {sizes.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setTextSize(s.id)}
+                  className={btn(textSize === s.id)}
+                >
+                  <span
+                    className={
+                      s.id === "s"
+                        ? "text-xs"
+                        : s.id === "l"
+                          ? "text-base"
+                          : "text-sm"
+                    }
+                  >
+                    A
+                  </span>{" "}
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </Section>
+
+          {/* Kurangi animasi */}
+          <Section title={t("settings.motion")} desc={t("settings.motion.desc")}>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setReduceMotion(false)}
+                className={btn(!reduceMotion)}
+              >
+                ✨ {t("settings.motion.off")}
+              </button>
+              <button
+                onClick={() => setReduceMotion(true)}
+                className={btn(reduceMotion)}
+              >
+                {t("settings.motion.on")}
+              </button>
+            </div>
+          </Section>
+
           {/* Pet */}
           <Section title={t("settings.pet")} desc={t("settings.pet.desc")}>
             <div className="flex flex-wrap gap-3">
@@ -134,7 +214,17 @@ export default function SettingsContent() {
           </Section>
         </div>
 
-        <p className="mt-6 text-sm text-gray-400">{t("settings.saved")}</p>
+        <div className="mt-6 flex items-center gap-4">
+          <button
+            onClick={onReset}
+            className="rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-500 transition-colors hover:border-red-400 hover:text-red-500 dark:border-gray-700 dark:text-gray-400"
+          >
+            ↺ {t("settings.reset")}
+          </button>
+          <p className="text-sm text-gray-400">
+            {resetDone ? t("settings.reset.done") : t("settings.saved")}
+          </p>
+        </div>
       </Reveal>
     </div>
   );

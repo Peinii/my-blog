@@ -10,7 +10,7 @@ import { useSettings } from "@/lib/settings-context";
  * Bisa dimatikan lewat halaman Settings. Menghormati prefers-reduced-motion.
  */
 export default function Pet() {
-  const { pet, t } = useSettings();
+  const { pet, reduceMotion, t } = useSettings();
   const pathname = usePathname();
   const wrapRef = useRef<HTMLDivElement>(null);
   const [flip, setFlip] = useState(false);
@@ -22,7 +22,9 @@ export default function Pet() {
     const el = wrapRef.current;
     if (!el || !pet) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced =
+      reduceMotion ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
 
     // Posisi awal: pojok kanan bawah
@@ -72,14 +74,54 @@ export default function Pet() {
       window.removeEventListener("mousemove", onMove);
       if (sleepTimer) clearInterval(sleepTimer);
     };
-  }, [pet]);
+  }, [pet, reduceMotion]);
 
   if (!pet || pathname?.startsWith("/studio")) return null;
+
+  // Suara "meow" disintesis via Web Audio API — tanpa file audio.
+  // Hanya berbunyi saat diklik (aturan autoplay browser terpenuhi).
+  function meow() {
+    try {
+      const AC =
+        window.AudioContext || (window as any).webkitAudioContext;
+      if (!AC) return;
+      const ctx: AudioContext =
+        (meow as any)._ctx || ((meow as any)._ctx = new AC());
+      if (ctx.state === "suspended") ctx.resume();
+
+      const t0 = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      osc.type = "sawtooth";
+      // kontur nada "me-oww": naik sebentar lalu turun melengkung
+      osc.frequency.setValueAtTime(620, t0);
+      osc.frequency.linearRampToValueAtTime(880, t0 + 0.12);
+      osc.frequency.exponentialRampToValueAtTime(300, t0 + 0.45);
+
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(1800, t0);
+      filter.Q.value = 4;
+
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.18, t0 + 0.05);
+      gain.gain.setValueAtTime(0.18, t0 + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.5);
+
+      osc.connect(filter).connect(gain).connect(ctx.destination);
+      osc.start(t0);
+      osc.stop(t0 + 0.55);
+    } catch {
+      /* browser tanpa audio: diam saja */
+    }
+  }
 
   function onPetClick() {
     setBubble(Math.random() > 0.5 ? "meow~ ♡" : "喵~ ♡");
     setHearts((h) => [...h, Date.now()]);
     setSleeping(false);
+    meow();
     setTimeout(() => setBubble(null), 1400);
     setTimeout(() => setHearts((h) => h.slice(1)), 1100);
   }

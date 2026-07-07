@@ -7,9 +7,16 @@ import { urlFor } from "@/lib/sanity.client";
 import { formatDate } from "./PostCard";
 import PostBody from "./PostBody";
 import Reveal from "./Reveal";
+import ShareButtons from "./ShareButtons";
 import type { Post } from "@/lib/queries";
 
-export default function PostView({ post }: { post: Post }) {
+export default function PostView({
+  post,
+  minutes,
+}: {
+  post: Post;
+  minutes?: number;
+}) {
   const { t, lang } = useSettings();
 
   return (
@@ -28,6 +35,11 @@ export default function PostView({ post }: { post: Post }) {
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 dark:text-gray-400">
             <time>{formatDate(post.publishedAt, lang)}</time>
+            {minutes ? (
+              <span>
+                · ⏱ {minutes} {t("post.minRead")}
+              </span>
+            ) : null}
             {post.authorName && (
               <span>
                 · {t("post.by")} {post.authorName}
@@ -64,6 +76,8 @@ export default function PostView({ post }: { post: Post }) {
         <div className="mt-8">
           {post.body && <PostBody body={post.body} />}
         </div>
+
+        <ShareButtons slug={post.slug} title={post.title} />
       </Reveal>
     </article>
   );
