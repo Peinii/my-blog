@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { SettingsProvider } from "@/lib/settings-context";
+import { getSiteContent } from "@/lib/site-content";
 import { siteUrl } from "@/lib/sanity.env";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -47,11 +48,15 @@ try {
 } catch (e) {}
 `;
 
-export default function RootLayout({
+// Teks situs dari Studio ikut segar maksimal 60 detik setelah Publish.
+export const revalidate = 60;
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const siteContent = await getSiteContent();
   return (
     <html lang="en" data-accent="blue" suppressHydrationWarning>
       <head>
@@ -74,7 +79,7 @@ export default function RootLayout({
         />
       </head>
       <body className="flex min-h-screen flex-col">
-        <SettingsProvider>
+        <SettingsProvider siteContent={siteContent}>
           <Navbar />
           <main className="mx-auto w-full max-w-4xl flex-1 px-5 pb-16 pt-8">
             {children}
