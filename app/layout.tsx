@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SettingsProvider } from "@/lib/settings-context";
 import { getSiteContent } from "@/lib/site-content";
@@ -7,6 +7,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Pet from "@/components/Pet";
 import ScrollTopPaw from "@/components/ScrollTopPaw";
+
+// viewportFit "cover" mengaktifkan safe-area untuk layar berponi/lipat.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -80,7 +87,7 @@ export default async function RootLayout({
       <body className="flex min-h-screen flex-col">
         <SettingsProvider siteContent={siteContent}>
           <Navbar />
-          <main className="mx-auto w-full max-w-4xl flex-1 px-5 pb-16 pt-8">
+          <main className="safe-x mx-auto w-full max-w-4xl flex-1 px-4 pb-16 pt-8 sm:px-5">
             {children}
           </main>
           <Footer />

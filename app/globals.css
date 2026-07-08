@@ -58,6 +58,20 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ===== Safe area (poni iPhone, layar lipat, landscape) ===== */
+.safe-x {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+.safe-bottom {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+
+/* Teks panjang tidak menjebol layar sempit (cover screen foldable 280px) */
+h1, h2, h3 {
+  overflow-wrap: break-word;
+}
+
 /* ===== Ukuran teks artikel (Settings) ===== */
 html[data-textsize="s"] .prose-article {
   font-size: 0.925rem;
