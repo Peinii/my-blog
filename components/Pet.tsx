@@ -13,8 +13,9 @@ import TurtleSvg from "./pets/TurtleSvg";
 import CapybaraSvg from "./pets/CapybaraSvg";
 import HorseSvg from "./pets/HorseSvg";
 import GoatSvg from "./pets/GoatSvg";
+import SealSvg from "./pets/SealSvg";
 
-const SVGS: Record<PetType, (p: { className?: string }) => JSX.Element> = {
+const SVGS: Partial<Record<PetType, (p: { className?: string }) => JSX.Element>> = {
   cat: CatSvg,
   bunny: BunnySvg,
   blob: BlobSvg,
@@ -24,6 +25,7 @@ const SVGS: Record<PetType, (p: { className?: string }) => JSX.Element> = {
   capybara: CapybaraSvg,
   horse: HorseSvg,
   goat: GoatSvg,
+  seal: SealSvg,
 };
 
 // ---------- suara unik per pet (Web Audio, tanpa file) ----------
@@ -110,6 +112,26 @@ function playSound(pet: PetType) {
         break;
       case "goat": // embik bergetar
         tone(ctx, { type: "sawtooth", from: 600, to: 520, dur: 0.4, vol: 0.14, filterFreq: 1400, vibrato: 9 });
+        break;
+      case "seal": // "arf arf" khas anjing laut
+        tone(ctx, { type: "square", from: 480, to: 260, dur: 0.11, vol: 0.13, filterFreq: 1100 });
+        tone(ctx, { type: "square", from: 520, to: 280, at: 0.18, dur: 0.11, vol: 0.14, filterFreq: 1100 });
+        break;
+      case "boy": // "tada!" ceria naik
+        tone(ctx, { type: "sine", from: 520, to: 780, dur: 0.1, vol: 0.13 });
+        tone(ctx, { type: "sine", from: 700, to: 1050, at: 0.12, dur: 0.16, vol: 0.13 });
+        break;
+      case "chonk": // dengkuran berat kucing gendut
+        tone(ctx, { type: "sawtooth", from: 210, to: 150, dur: 0.5, vol: 0.13, filterFreq: 700, vibrato: 22 });
+        break;
+      case "hero": // "hyah!" tegas
+        tone(ctx, { type: "square", from: 750, to: 280, dur: 0.09, vol: 0.13, filterFreq: 1600 });
+        tone(ctx, { type: "square", from: 500, to: 200, at: 0.1, dur: 0.12, vol: 0.11, filterFreq: 1400 });
+        break;
+      case "laugh": // "ha-ha-ha" tiga nada turun
+        tone(ctx, { type: "triangle", from: 460, to: 400, dur: 0.09, vol: 0.14 });
+        tone(ctx, { type: "triangle", from: 420, to: 360, at: 0.14, dur: 0.09, vol: 0.14 });
+        tone(ctx, { type: "triangle", from: 380, to: 320, at: 0.28, dur: 0.11, vol: 0.14 });
         break;
     }
   } catch {
@@ -210,9 +232,19 @@ export default function Pet() {
       {hearts.map((id) => (
         <span key={id} className="pet-heart">♥</span>
       ))}
-      <PetSvg
-        className={`pet-svg ${flip ? "pet-flip" : ""} ${sleeping ? "pet-sleep" : ""}`}
-      />
+      {def.img ? (
+        <span
+          className={sleeping ? "pet-sleep" : ""}
+          style={{ display: "inline-block", transform: flip ? "scaleX(-1)" : undefined }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={def.img} alt="" draggable={false} className="pet-img" />
+        </span>
+      ) : (
+        <PetSvg
+          className={`pet-svg ${flip ? "pet-flip" : ""} ${sleeping ? "pet-sleep" : ""}`}
+        />
+      )}
     </div>
   );
 }

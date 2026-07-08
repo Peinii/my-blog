@@ -83,7 +83,9 @@ export default function SettingsContent() {
     { id: "cute", sample: "你好呀", cls: "zhfont-sample-cute" },
   ];
   const petDef = getPetDef(petType);
-  const petTypes = Object.values(PETS) as (typeof petDef)[];
+  const allPets = Object.values(PETS) as (typeof petDef)[];
+  const normalPets = allPets.filter((p) => !p.special);
+  const specialPets = allPets.filter((p) => p.special);
 
   function swatchStyle(c: (typeof petDef.colors)[number]): React.CSSProperties {
     if (!c.swatch || c.swatch.length === 0)
@@ -225,7 +227,7 @@ export default function SettingsContent() {
                     </span>
                   </p>
                   <div className="flex flex-wrap gap-2.5">
-                    {petTypes.map((p) => (
+                    {normalPets.map((p) => (
                       <button
                         key={p.id}
                         onClick={() => setPetType(p.id as PetType)}
@@ -236,39 +238,71 @@ export default function SettingsContent() {
                       </button>
                     ))}
                   </div>
+
+                  {/* Special companions */}
+                  {specialPets.length > 0 && (
+                    <>
+                      <p className="mb-2 mt-4 text-sm font-medium text-gray-600 dark:text-gray-300">
+                        {t("settings.petType.special")}
+                      </p>
+                      <div className="flex flex-wrap gap-2.5">
+                        {specialPets.map((p) => (
+                          <button
+                            key={p.id}
+                            onClick={() => setPetType(p.id as PetType)}
+                            className={btn(petType === p.id)}
+                          >
+                            {p.img ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={p.img}
+                                alt=""
+                                className="mr-1.5 inline-block h-6 w-auto align-middle"
+                              />
+                            ) : (
+                              <span className="mr-1 text-base">{p.emoji}</span>
+                            )}
+                            {lang === "zh" ? p.zh : p.en}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
 
-                {/* Warna / ras */}
-                <div className="mt-5">
-                  <p className="mb-3 text-sm font-medium text-gray-600 dark:text-gray-300">
-                    {t("settings.petColor")}{" "}
-                    <span className="font-normal text-gray-400">
-                      — {t("settings.petColor.desc")}
-                    </span>
-                  </p>
-                  <div className="flex flex-wrap gap-4">
-                    {petDef.colors.map((c) => (
-                      <button
-                        key={c.id}
-                        onClick={() => setPetColor(c.id)}
-                        aria-label={c.en}
-                        className="flex w-16 flex-col items-center gap-1.5"
-                      >
-                        <span
-                          className={`h-9 w-9 rounded-full border border-black/5 transition-transform hover:scale-110 dark:border-white/10 ${
-                            petColor === c.id
-                              ? "ring-2 ring-accent ring-offset-2 dark:ring-offset-gray-900"
-                              : ""
-                          }`}
-                          style={swatchStyle(c)}
-                        />
-                        <span className="text-center text-xs leading-tight text-gray-500 dark:text-gray-400">
-                          {lang === "zh" ? c.zh : c.en}
-                        </span>
-                      </button>
-                    ))}
+                {/* Warna / ras (disembunyikan utk special companion) */}
+                {petDef.colors.length > 1 && (
+                  <div className="mt-5">
+                    <p className="mb-3 text-sm font-medium text-gray-600 dark:text-gray-300">
+                      {t("settings.petColor")}{" "}
+                      <span className="font-normal text-gray-400">
+                        — {t("settings.petColor.desc")}
+                      </span>
+                    </p>
+                    <div className="flex flex-wrap gap-4">
+                      {petDef.colors.map((c) => (
+                        <button
+                          key={c.id}
+                          onClick={() => setPetColor(c.id)}
+                          aria-label={c.en}
+                          className="flex w-16 flex-col items-center gap-1.5"
+                        >
+                          <span
+                            className={`h-9 w-9 rounded-full border border-black/5 transition-transform hover:scale-110 dark:border-white/10 ${
+                              petColor === c.id
+                                ? "ring-2 ring-accent ring-offset-2 dark:ring-offset-gray-900"
+                                : ""
+                            }`}
+                            style={swatchStyle(c)}
+                          />
+                          <span className="text-center text-xs leading-tight text-gray-500 dark:text-gray-400">
+                            {lang === "zh" ? c.zh : c.en}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             )}
           </Section>
