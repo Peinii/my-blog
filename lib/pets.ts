@@ -217,8 +217,8 @@ export const PETS: Record<PetType, PetDef> = {
   boy: {
     id: "boy",
     emoji: "🏃",
-    en: "Lil runner",
-    zh: "小奔跑",
+    en: "Mori",
+    zh: "毛利",
     special: true,
     img: "/pets/boy.png",
     bubbles: ["yippee~ ♡", "耶嘿~ ♡"],
@@ -227,8 +227,8 @@ export const PETS: Record<PetType, PetDef> = {
   chonk: {
     id: "chonk",
     emoji: "🍊",
-    en: "Chonky cat",
-    zh: "大胖橘",
+    en: "Kayden",
+    zh: "凯登",
     special: true,
     img: "/pets/chonk.png",
     bubbles: ["mrrp~ ♡", "咕噜~ ♡"],
@@ -237,8 +237,8 @@ export const PETS: Record<PetType, PetDef> = {
   hero: {
     id: "hero",
     emoji: "🥋",
-    en: "Swordsman",
-    zh: "小侠客",
+    en: "Cheongmyeong",
+    zh: "青明",
     special: true,
     img: "/pets/hero.png",
     bubbles: ["hyah!~ ♡", "哈!~ ♡"],
@@ -247,8 +247,8 @@ export const PETS: Record<PetType, PetDef> = {
   laugh: {
     id: "laugh",
     emoji: "😂",
-    en: "Laughing bro",
-    zh: "爆笑哥",
+    en: "Lloyd Frontera",
+    zh: "劳埃德",
     special: true,
     img: "/pets/laugh.png",
     bubbles: ["HAHAHA~", "哈哈哈~"],
