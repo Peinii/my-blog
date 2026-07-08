@@ -180,6 +180,23 @@ html[lang="zh-CN"][data-zhfont="cute"] button {
   animation: pet-tail 2.6s ease-in-out infinite;
   transform-origin: 50px 46px;
 }
+/* special companion: gambar PNG */
+.pet-img {
+  height: 64px;
+  width: auto;
+  user-select: none;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.22));
+  animation: pet-bob 2.6s ease-in-out infinite;
+}
+@keyframes pet-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.pet-sleep .pet-img {
+  animation: none;
+  filter: grayscale(0.3) drop-shadow(0 2px 3px rgb(0 0 0 / 0.22));
+}
+
 /* blob: badan memantul kenyal */
 .pet-svg .pet-blob-body {
   animation: pet-squish 2.4s ease-in-out infinite;
