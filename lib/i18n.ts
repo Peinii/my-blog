@@ -8,6 +8,7 @@ export const dict = {
     "nav.blog": "Blog",
     "nav.about": "About",
     "nav.settings": "Settings",
+    "nav.menu": "Menu",
     "home.hello": "Hi, I'm Peini 👋",
     "home.intro":
       "Welcome to my corner of the internet. I write about life, work, and whatever I'm curious about this week.",
@@ -90,6 +91,7 @@ export const dict = {
     "nav.blog": "博客",
     "nav.about": "关于",
     "nav.settings": "设置",
+    "nav.menu": "菜单",
     "home.hello": "你好，我是佩妮 👋",
     "home.intro": "欢迎来到我的小天地。我在这里写生活、工作，以及本周让我好奇的一切。",
     "home.latest": "最新文章",
