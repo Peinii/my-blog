@@ -168,7 +168,21 @@ export default function Pet() {
 
     el.style.transform = `translate(${x}px, ${y}px)`;
 
-    if (reduced || isTouch) return; // duduk manis di pojok
+    if (reduced || isTouch) {
+      // Duduk manis di pojok — dan pindah ikut ukuran layar
+      // saat HP diputar / foldable dibuka-tutup.
+      const replace = () => {
+        x = window.innerWidth - 90;
+        y = window.innerHeight - 90;
+        el.style.transform = `translate(${x}px, ${y}px)`;
+      };
+      window.addEventListener("resize", replace);
+      window.addEventListener("orientationchange", replace);
+      return () => {
+        window.removeEventListener("resize", replace);
+        window.removeEventListener("orientationchange", replace);
+      };
+    }
 
     function onMove(e: MouseEvent) {
       tx = e.clientX - 70;
