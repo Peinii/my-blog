@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSettings } from "@/lib/settings-context";
 import PostCard from "./PostCard";
 import Reveal from "./Reveal";
+import WaveDivider from "./WaveDivider";
 import type { Post } from "@/lib/queries";
 
 export default function HomeContent({ posts }: { posts: Post[] }) {
@@ -28,6 +29,8 @@ export default function HomeContent({ posts }: { posts: Post[] }) {
           </p>
         </Reveal>
       </section>
+
+      <WaveDivider className="mb-10" />
 
       {/* Latest posts */}
       <section>

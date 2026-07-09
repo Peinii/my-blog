@@ -7,6 +7,8 @@ import {
   type Mode,
   type TextSize,
   type ZhFont,
+  type EnFont,
+  type Theme,
 } from "@/lib/settings-context";
 import { PETS, getPetDef, type PetType } from "@/lib/pets";
 import type { Lang } from "@/lib/i18n";
@@ -50,6 +52,8 @@ export default function SettingsContent() {
     textSize,
     reduceMotion,
     zhFont,
+    enFont,
+    theme,
     setLang,
     setMode,
     setAccent,
@@ -59,6 +63,8 @@ export default function SettingsContent() {
     setTextSize,
     setReduceMotion,
     setZhFont,
+    setEnFont,
+    setTheme,
     reset,
   } = useSettings();
   const [resetDone, setResetDone] = useState(false);
@@ -76,6 +82,22 @@ export default function SettingsContent() {
     { id: "s", label: t("settings.textSize.s") },
     { id: "m", label: t("settings.textSize.m") },
     { id: "l", label: t("settings.textSize.l") },
+  ];
+  const themes: { id: Theme; emoji: string; hex: string }[] = [
+    { id: "classic", emoji: "🎨", hex: "" },
+    { id: "sakura", emoji: "🌸", hex: "#e85d8a" },
+    { id: "matcha", emoji: "🍵", hex: "#5f8d4e" },
+    { id: "midnight", emoji: "🌙", hex: "#8b7ff5" },
+    { id: "ocean", emoji: "🌊", hex: "#2d8fc4" },
+  ];
+  const enFonts: { id: EnFont; name: string; cls: string }[] = [
+    { id: "default", name: "Default", cls: "enfont-sample-default" },
+    { id: "cormorant", name: "Cormorant Garamond", cls: "enfont-sample-cormorant" },
+    { id: "playfair", name: "Playfair Display", cls: "enfont-sample-playfair" },
+    { id: "imfell", name: "IM Fell English SC", cls: "enfont-sample-imfell" },
+    { id: "dancing", name: "Dancing Script", cls: "enfont-sample-dancing" },
+    { id: "vibes", name: "Great Vibes", cls: "enfont-sample-vibes" },
+    { id: "pacifico", name: "Pacifico", cls: "enfont-sample-pacifico" },
   ];
   const zhFonts: { id: ZhFont; sample: string; cls: string }[] = [
     { id: "kai", sample: "你好呀", cls: "zhfont-sample-kai" },
@@ -138,6 +160,33 @@ export default function SettingsContent() {
                 </button>
               ))}
             </div>
+          </Section>
+
+          {/* Theme pack */}
+          <Section title={t("settings.theme")} desc={t("settings.theme.desc")}>
+            <div className="flex flex-wrap gap-3">
+              {themes.map((th) => (
+                <button
+                  key={th.id}
+                  onClick={() => setTheme(th.id)}
+                  className={btn(theme === th.id)}
+                >
+                  <span className="mr-1.5">{th.emoji}</span>
+                  {t(`settings.theme.${th.id}` as any)}
+                  {th.hex && (
+                    <span
+                      className="ml-2 inline-block h-3 w-3 rounded-full align-middle"
+                      style={{ backgroundColor: th.hex }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+            {theme !== "classic" && (
+              <p className="mt-3 text-xs text-gray-400">
+                {t("settings.theme.accentNote")}
+              </p>
+            )}
           </Section>
 
           {/* Light / dark */}
@@ -323,7 +372,8 @@ export default function SettingsContent() {
             </div>
           </Section>
 
-          {/* Warna aksen */}
+          {/* Warna aksen (hanya saat tema Classic) */}
+          {theme === "classic" && (
           <Section title={t("settings.accent")} desc={t("settings.accent.desc")}>
             <div className="flex flex-wrap gap-4">
               {ACCENTS.map((a) => (
@@ -344,6 +394,23 @@ export default function SettingsContent() {
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     {t(`settings.accent.${a.id}` as any)}
                   </span>
+                </button>
+              ))}
+            </div>
+          </Section>
+          )}
+
+          {/* Font English */}
+          <Section title={t("settings.enFont")} desc={t("settings.enFont.desc")}>
+            <div className="flex flex-wrap gap-3">
+              {enFonts.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => setEnFont(f.id)}
+                  className={btn(enFont === f.id)}
+                >
+                  <span className={`${f.cls} mr-1.5 text-lg`}>Aa</span>
+                  {f.name}
                 </button>
               ))}
             </div>
