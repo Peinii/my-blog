@@ -46,6 +46,128 @@ html[data-accent="mono"] {
   --accent-soft: #1f2937;
 }
 
+/* ===== Theme packs (Settings → Theme) =====
+   classic = pakai pilihan accent manual. Pack menimpa accent + bg. */
+html[data-theme="sakura"] {
+  --accent: #e85d8a;
+  --accent-soft: #fdeef4;
+}
+html.dark[data-theme="sakura"] {
+  --accent: #f48fb1;
+  --accent-soft: #3a1d29;
+}
+html[data-theme="matcha"] {
+  --accent: #5f8d4e;
+  --accent-soft: #eef5e9;
+}
+html.dark[data-theme="matcha"] {
+  --accent: #8fbf7f;
+  --accent-soft: #1e2b18;
+}
+html[data-theme="midnight"] {
+  --accent: #8b7ff5;
+  --accent-soft: #edeafd;
+}
+html.dark[data-theme="midnight"] {
+  --accent: #a99df8;
+  --accent-soft: #241f45;
+}
+html[data-theme="ocean"] {
+  --accent: #2d8fc4;
+  --accent-soft: #e7f3fa;
+}
+html.dark[data-theme="ocean"] {
+  --accent: #6cc3ee;
+  --accent-soft: #0f2a3a;
+}
+
+/* Latar halus per tema (menimpa bg-white / bg-gray-950 bawaan) */
+html[data-theme="sakura"] body { background-color: #fffafc; }
+html.dark[data-theme="sakura"] body { background-color: #16101a; }
+html[data-theme="matcha"] body { background-color: #fbfdf8; }
+html.dark[data-theme="matcha"] body { background-color: #10160e; }
+html[data-theme="midnight"] body { background-color: #f8f7ff; }
+html.dark[data-theme="midnight"] body { background-color: #0d0b1e; }
+html[data-theme="ocean"] body { background-color: #f7fbfd; }
+html.dark[data-theme="ocean"] body { background-color: #081722; }
+
+/* Pola titik samar mengikuti warna tema */
+html:not([data-theme="classic"]) body {
+  background-image: radial-gradient(var(--accent-soft) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* ===== Scrollbar & seleksi teks ikut tema (semua tema) ===== */
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 999px;
+  border: 2.5px solid transparent;
+  background-clip: content-box;
+}
+
+/* ===== Lapisan partikel tema ===== */
+.particles-layer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.particle {
+  position: absolute;
+  color: var(--accent);
+  opacity: var(--p-opacity, 0.5);
+  will-change: transform;
+}
+.particle-fall {
+  top: -8%;
+  animation-name: p-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes p-fall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(115vh) rotate(300deg); }
+}
+.particle-rise {
+  bottom: -8%;
+  top: auto;
+  animation-name: p-rise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes p-rise {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-115vh); }
+}
+.particle-twinkle {
+  animation-name: p-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes p-twinkle {
+  0%, 100% { opacity: 0.12; transform: scale(0.7); }
+  50% { opacity: var(--p-opacity, 0.5); transform: scale(1.1); }
+}
+.reduce-motion .particles-layer {
+  display: none;
+}
+
 /* ===== Warna pet =====
    Diatur per-jenis & per-ras lewat CSS variables inline dari lib/pets.ts.
    Default di bawah hanya jaga-jaga. */
@@ -158,6 +280,42 @@ html[lang="zh-CN"][data-zhfont="cute"] button {
 .zhfont-sample-kai { font-family: "LXGW WenKai", sans-serif; }
 .zhfont-sample-hand { font-family: "Long Cang", cursive; }
 .zhfont-sample-cute { font-family: "ZCOOL KuaiLe", sans-serif; }
+
+/* ===== Font English — 7 pilihan di Settings ===== */
+html[lang="en"][data-enfont="cormorant"] body {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.06em;
+}
+html[lang="en"][data-enfont="imfell"] body {
+  font-family: "IM Fell English SC", Georgia, serif;
+}
+html[lang="en"][data-enfont="vibes"] body {
+  font-family: "Great Vibes", cursive;
+  font-size: 1.12em;
+}
+html[lang="en"][data-enfont="dancing"] body {
+  font-family: "Dancing Script", cursive;
+  font-size: 1.08em;
+}
+html[lang="en"][data-enfont="pacifico"] body {
+  font-family: "Pacifico", cursive;
+}
+html[lang="en"][data-enfont="playfair"] body {
+  font-family: "Playfair Display", Georgia, serif;
+}
+/* Code block tetap monospace apa pun fontnya */
+html[data-enfont] .prose-article pre,
+html[data-enfont] .prose-article code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.enfont-sample-default { font-family: ui-sans-serif, system-ui, sans-serif; }
+.enfont-sample-cormorant { font-family: "Cormorant Garamond", serif; }
+.enfont-sample-imfell { font-family: "IM Fell English SC", serif; }
+.enfont-sample-vibes { font-family: "Great Vibes", cursive; }
+.enfont-sample-dancing { font-family: "Dancing Script", cursive; }
+.enfont-sample-pacifico { font-family: "Pacifico", cursive; }
+.enfont-sample-playfair { font-family: "Playfair Display", serif; }
 
 /* ===== Pet kucing 🐱 ===== */
 .pet-wrap {

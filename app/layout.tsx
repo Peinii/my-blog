@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Pet from "@/components/Pet";
 import ScrollTopPaw from "@/components/ScrollTopPaw";
+import ThemeParticles from "@/components/ThemeParticles";
 
 // viewportFit "cover" mengaktifkan safe-area untuk layar berponi/lipat.
 export const viewport: Viewport = {
@@ -50,6 +51,8 @@ try {
   document.documentElement.setAttribute('data-accent', s.accent || 'blue');
   document.documentElement.setAttribute('data-textsize', s.textSize || 'm');
   document.documentElement.setAttribute('data-zhfont', s.zhFont || 'kai');
+  document.documentElement.setAttribute('data-enfont', s.enFont || 'default');
+  document.documentElement.setAttribute('data-theme', s.theme || 'classic');
   if (s.lang === 'zh') document.documentElement.setAttribute('lang', 'zh-CN');
 } catch (e) {}
 `;
@@ -83,9 +86,15 @@ export default async function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Long+Cang&family=ZCOOL+KuaiLe&display=swap"
         />
+        {/* Font English pilihan (Settings) */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=IM+Fell+English+SC&family=Great+Vibes&family=Dancing+Script:wght@400;600&family=Pacifico&family=Playfair+Display:wght@400;600&display=swap"
+        />
       </head>
       <body className="flex min-h-screen flex-col">
         <SettingsProvider siteContent={siteContent}>
+          <ThemeParticles />
           <Navbar />
           <main className="safe-x mx-auto w-full max-w-4xl flex-1 px-4 pb-16 pt-8 sm:px-5">
             {children}
