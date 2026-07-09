@@ -71,9 +71,11 @@ export const post = defineType({
               type: "url",
               validation: (r) =>
                 r.required().custom((val: string | undefined) =>
-                  val && val.includes("canva.com/design/")
+                  val &&
+                  (val.includes("canva.com/design/") ||
+                    val.includes("canva.link/"))
                     ? true
-                    : "Harus link desain Canva (canva.com/design/…)"
+                    : "Harus link Canva (canva.com/design/… atau canva.link/…)"
                 ),
             }),
           ],
