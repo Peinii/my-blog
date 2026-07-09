@@ -18,6 +18,15 @@ export type Mode = "light" | "dark" | "system";
 export type Accent = "blue" | "teal" | "amber" | "rose" | "mono";
 export type TextSize = "s" | "m" | "l";
 export type ZhFont = "kai" | "hand" | "cute";
+export type EnFont =
+  | "default"
+  | "cormorant"
+  | "imfell"
+  | "vibes"
+  | "dancing"
+  | "pacifico"
+  | "playfair";
+export type Theme = "classic" | "sakura" | "matcha" | "midnight" | "ocean";
 export type { PetType } from "./pets";
 import type { PetType } from "./pets";
 
@@ -31,6 +40,8 @@ interface Settings {
   textSize: TextSize;
   reduceMotion: boolean;
   zhFont: ZhFont;
+  enFont: EnFont;
+  theme: Theme;
 }
 
 interface SettingsCtx extends Settings {
@@ -46,6 +57,8 @@ interface SettingsCtx extends Settings {
   setTextSize: (s: TextSize) => void;
   setReduceMotion: (r: boolean) => void;
   setZhFont: (f: ZhFont) => void;
+  setEnFont: (f: EnFont) => void;
+  setTheme: (t: Theme) => void;
   setPetColor: (c: string) => void;
   reset: () => void;
 }
@@ -60,6 +73,8 @@ const DEFAULTS: Settings = {
   textSize: "m",
   reduceMotion: false,
   zhFont: "kai",
+  enFont: "default",
+  theme: "classic",
 };
 const STORAGE_KEY = "peini-settings";
 
@@ -76,6 +91,8 @@ const Ctx = createContext<SettingsCtx>({
   setTextSize: () => {},
   setReduceMotion: () => {},
   setZhFont: () => {},
+  setEnFont: () => {},
+  setTheme: () => {},
   setPetColor: () => {},
   reset: () => {},
 });
@@ -91,6 +108,8 @@ function apply(s: Settings) {
   root.setAttribute("data-accent", s.accent);
   root.setAttribute("data-textsize", s.textSize);
   root.setAttribute("data-zhfont", s.zhFont);
+  root.setAttribute("data-enfont", s.enFont);
+  root.setAttribute("data-theme", s.theme);
   root.setAttribute("lang", s.lang === "zh" ? "zh-CN" : "en");
 }
 
@@ -155,6 +174,8 @@ export function SettingsProvider({
     setTextSize: (textSize) => update({ textSize }),
     setReduceMotion: (reduceMotion) => update({ reduceMotion }),
     setZhFont: (zhFont) => update({ zhFont }),
+    setEnFont: (enFont) => update({ enFont }),
+    setTheme: (theme) => update({ theme }),
     setPetColor: (petColor) => update({ petColor }),
     reset: () => update({ ...DEFAULTS }),
   };

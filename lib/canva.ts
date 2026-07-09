@@ -4,6 +4,28 @@
 //   https://www.canva.com/design/DAGabc123/XyZ/view?utm_content=...
 //   https://www.canva.com/design/DAGabc123/XyZ/edit
 // Hasil: https://www.canva.com/design/DAGabc123/XyZ/view?embed
+// Apakah ini link Canva yang kita kenal? (design langsung ATAU short link)
+export function isCanvaLink(raw?: string): boolean {
+  if (!raw) return false;
+  try {
+    const u = new URL(raw);
+    if (/(^|\.)canva\.link$/i.test(u.hostname)) return true;
+    return /(^|\.)canva\.com$/i.test(u.hostname) && u.pathname.includes("/design/");
+  } catch {
+    return false;
+  }
+}
+
+// Short link canva.link perlu di-resolve server (lihat /api/canva).
+export function isCanvaShortLink(raw?: string): boolean {
+  if (!raw) return false;
+  try {
+    return /(^|\.)canva\.link$/i.test(new URL(raw).hostname);
+  } catch {
+    return false;
+  }
+}
+
 export function canvaEmbedUrl(raw?: string): string | null {
   if (!raw) return null;
   try {
