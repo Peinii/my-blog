@@ -25,8 +25,13 @@ export interface SiteContent {
 // dan blog memakai teks bawaan — tidak akan pernah error.
 export async function getSiteContent(): Promise<SiteContent | null> {
   try {
+    // Utamakan dokumen singleton (_id "siteSettings"); kalau belum ada,
+    // pakai dokumen siteSettings apa pun yang pernah dibuat sebelumnya.
     const doc = await client.fetch(
-      groq`*[_type == "siteSettings"][0]{
+      groq`coalesce(
+        *[_id == "siteSettings"][0],
+        *[_type == "siteSettings"][0]
+      ){
         siteName, heroTitle, heroIntro, aboutBody,
         contacts[]{_key, label, url}
       }`
