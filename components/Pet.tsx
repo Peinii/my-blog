@@ -148,6 +148,34 @@ export default function Pet() {
   const [bubble, setBubble] = useState<string | null>(null);
   const [hearts, setHearts] = useState<number[]>([]);
   const [sleeping, setSleeping] = useState(false);
+  const movedRef = useRef(false);
+
+  // Sapaan kecil sesuai jam, sekali per kunjungan.
+  useEffect(() => {
+    if (!pet) return;
+    try {
+      if (sessionStorage.getItem("pet-greeted")) return;
+      sessionStorage.setItem("pet-greeted", "1");
+    } catch {
+      /* private mode: sapa saja */
+    }
+    const h = new Date().getHours();
+    const key =
+      h >= 5 && h < 11
+        ? "pet.greet.morning"
+        : h >= 11 && h < 15
+          ? "pet.greet.day"
+          : h >= 15 && h < 19
+            ? "pet.greet.evening"
+            : "pet.greet.night";
+    const show = setTimeout(() => setBubble(t(key as any)), 900);
+    const hide = setTimeout(() => setBubble(null), 3400);
+    return () => {
+      clearTimeout(show);
+      clearTimeout(hide);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pet]);
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -185,11 +213,48 @@ export default function Pet() {
     }
 
     function onMove(e: MouseEvent) {
+      if (dragging) return;
       tx = e.clientX - 70;
       ty = e.clientY + 24;
       lastMove = Date.now();
       setSleeping(false);
     }
+
+    // ===== Gendong pet (drag & drop) =====
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    function onPointerDown(e: PointerEvent) {
+      dragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      movedRef.current = false;
+      el!.classList.add("pet-grabbing");
+      el!.setPointerCapture?.(e.pointerId);
+    }
+    function onPointerMove(e: PointerEvent) {
+      if (!dragging) return;
+      if (
+        Math.abs(e.clientX - startX) > 6 ||
+        Math.abs(e.clientY - startY) > 6
+      ) {
+        movedRef.current = true;
+      }
+      // pet menempel di tangan
+      x = tx = e.clientX - 28;
+      y = ty = e.clientY - 30;
+      lastMove = Date.now();
+      setSleeping(false);
+    }
+    function onPointerUp() {
+      dragging = false;
+      el!.classList.remove("pet-grabbing");
+    }
+
+    el.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
 
     // kura-kura jalan lebih santai :)
     const speed = petType === "turtle" ? 0.03 : 0.06;
@@ -214,6 +279,9 @@ export default function Pet() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("mousemove", onMove);
+      el.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
       if (sleepTimer) clearInterval(sleepTimer);
     };
   }, [pet, petType, reduceMotion]);
@@ -225,6 +293,11 @@ export default function Pet() {
   const PetSvg = SVGS[def.id] ?? CatSvg;
 
   function onPetClick() {
+    // habis di-drag? itu bukan klik
+    if (movedRef.current) {
+      movedRef.current = false;
+      return;
+    }
     setBubble(def.bubbles[lang === "zh" ? 1 : 0]);
     setHearts((h) => [...h, Date.now()]);
     setSleeping(false);
