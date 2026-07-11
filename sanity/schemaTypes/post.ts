@@ -35,6 +35,8 @@ export const post = defineType({
     defineField({
       name: "publishedAt",
       title: "Published At",
+      description:
+        "JADWAL PUBLISH: set ke tanggal/jam depan, artikel otomatis tampil saat waktunya tiba (maks. telat 1 menit). Tetap klik Publish setelah mengisi.",
       type: "datetime",
       initialValue: () => new Date().toISOString(),
       validation: (r) => r.required(),
