@@ -8,15 +8,22 @@ export const tag = defineType({
     defineField({
       name: "name",
       title: "Name",
+      description:
+        "Rename di sini → semua artikel yang memakai tag ini otomatis ikut berubah.",
       type: "string",
       validation: (r) => r.required(),
     }),
     defineField({
       name: "slug",
       title: "Slug",
+      description:
+        "Setelah rename, klik Generate kalau mau slug ikut nama baru (opsional).",
       type: "slug",
       options: { source: "name", maxLength: 48 },
       validation: (r) => r.required(),
     }),
   ],
+  preview: {
+    select: { title: "name", subtitle: "slug.current" },
+  },
 });

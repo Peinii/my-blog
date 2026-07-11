@@ -8,6 +8,8 @@ export const author = defineType({
     defineField({
       name: "name",
       title: "Name",
+      description:
+        "Rename di sini → semua artikel dengan penulis ini otomatis ikut berubah.",
       type: "string",
       validation: (r) => r.required(),
     }),
@@ -24,4 +26,7 @@ export const author = defineType({
       rows: 3,
     }),
   ],
+  preview: {
+    select: { title: "name", media: "photo" },
+  },
 });

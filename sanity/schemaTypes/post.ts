@@ -14,6 +14,8 @@ export const post = defineType({
     defineField({
       name: "slug",
       title: "Slug (URL)",
+      description:
+        "Alamat artikel. Setelah me-rename Title, slug TIDAK ikut berubah — klik Generate kalau mau URL baru (link lama akan mati). Biarkan kalau ingin URL tetap.",
       type: "slug",
       options: { source: "title", maxLength: 96 },
       validation: (r) => r.required(),
