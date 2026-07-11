@@ -8,12 +8,14 @@ import Footer from "@/components/Footer";
 import Pet from "@/components/Pet";
 import ScrollTopPaw from "@/components/ScrollTopPaw";
 import ThemeParticles from "@/components/ThemeParticles";
+import SWRegister from "@/components/SWRegister";
 
 // viewportFit "cover" mengaktifkan safe-area untuk layar berponi/lipat.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#4361ee",
 };
 
 export const metadata: Metadata = {
@@ -29,6 +31,15 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: "Peini's Blog",
     type: "website",
+  },
+  // PWA / Add to Home Screen
+  appleWebApp: {
+    capable: true,
+    title: "Peini",
+    statusBarStyle: "default",
+  },
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
   },
   // Minta mesin pencari (Google dll.) untuk TIDAK mengindex blog ini.
   robots: {
@@ -102,6 +113,7 @@ export default async function RootLayout({
           <Footer />
           <Pet />
           <ScrollTopPaw />
+          <SWRegister />
         </SettingsProvider>
       </body>
     </html>
