@@ -249,18 +249,23 @@ export default function SettingsContent() {
             desc={t("settings.uistyle.desc")}
           >
             <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setUiStyle("flat")}
-                className={btn(uiStyle === "flat")}
-              >
-                ▭ {t("settings.uistyle.flat")}
-              </button>
-              <button
-                onClick={() => setUiStyle("clay")}
-                className={btn(uiStyle === "clay")}
-              >
-                🏺 {t("settings.uistyle.clay")}
-              </button>
+              {(
+                [
+                  { id: "flat", icon: "▭" },
+                  { id: "clay", icon: "🏺" },
+                  { id: "glass", icon: "🫧" },
+                  { id: "brutal", icon: "⬛" },
+                  { id: "neu", icon: "☁️" },
+                ] as const
+              ).map((st) => (
+                <button
+                  key={st.id}
+                  onClick={() => setUiStyle(st.id)}
+                  className={btn(uiStyle === st.id)}
+                >
+                  {st.icon} {t(`settings.uistyle.${st.id}` as any)}
+                </button>
+              ))}
             </div>
           </Section>
 
