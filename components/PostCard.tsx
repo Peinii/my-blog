@@ -6,9 +6,13 @@ import { urlFor } from "@/lib/sanity.client";
 import { useSettings } from "@/lib/settings-context";
 import type { Post } from "@/lib/queries";
 
+const LOCALES: Record<string, string> = {
+  en: "en-US", zh: "zh-CN", de: "de-DE", fr: "fr-FR", es: "es-ES", it: "it-IT",
+};
+
 export function formatDate(iso: string, lang: string) {
   try {
-    return new Intl.DateTimeFormat(lang === "zh" ? "zh-CN" : "en-US", {
+    return new Intl.DateTimeFormat(LOCALES[lang] || "en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",

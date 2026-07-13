@@ -18,7 +18,7 @@ export default function PostView({
   post: Post;
   minutes?: number;
 }) {
-  const { t, lang } = useSettings();
+  const { t, lang, dictEnabled } = useSettings();
 
   return (
     <article className="mx-auto max-w-content">
@@ -74,7 +74,7 @@ export default function PostView({
           </div>
         )}
 
-        {post.language && post.language !== "en" ? (
+        {dictEnabled && post.language && post.language !== "en" ? (
           <>
             <p className="dict-hint mt-6 rounded-lg px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
               {t("post.dict.hint")}

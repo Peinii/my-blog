@@ -11,7 +11,7 @@ import {
   type Theme,
 } from "@/lib/settings-context";
 import { PETS, getPetDef, type PetType } from "@/lib/pets";
-import type { Lang } from "@/lib/i18n";
+import { LANGS } from "@/lib/i18n";
 import Reveal from "./Reveal";
 
 const ACCENTS: { id: Accent; hex: string }[] = [
@@ -54,6 +54,8 @@ export default function SettingsContent() {
     zhFont,
     enFont,
     theme,
+    dictEnabled,
+    setDictEnabled,
     setLang,
     setMode,
     setAccent,
@@ -69,10 +71,7 @@ export default function SettingsContent() {
   } = useSettings();
   const [resetDone, setResetDone] = useState(false);
 
-  const langs: { id: Lang; label: string }[] = [
-    { id: "en", label: "English" },
-    { id: "zh", label: "中文 (Mandarin)" },
-  ];
+  const langs = LANGS;
   const modes: { id: Mode; label: string; icon: string }[] = [
     { id: "light", label: t("settings.light"), icon: "☀️" },
     { id: "dark", label: t("settings.dark"), icon: "🌙" },
@@ -94,6 +93,9 @@ export default function SettingsContent() {
     { id: "default", name: "Default", cls: "enfont-sample-default" },
     { id: "cormorant", name: "Cormorant Garamond", cls: "enfont-sample-cormorant" },
     { id: "playfair", name: "Playfair Display", cls: "enfont-sample-playfair" },
+    { id: "lora", name: "Lora", cls: "enfont-sample-lora" },
+    { id: "comfortaa", name: "Comfortaa", cls: "enfont-sample-comfortaa" },
+    { id: "parisienne", name: "Parisienne", cls: "enfont-sample-parisienne" },
     { id: "imfell", name: "IM Fell English SC", cls: "enfont-sample-imfell" },
     { id: "dancing", name: "Dancing Script", cls: "enfont-sample-dancing" },
     { id: "vibes", name: "Great Vibes", cls: "enfont-sample-vibes" },
@@ -104,6 +106,7 @@ export default function SettingsContent() {
     { id: "hand", sample: "你好呀", cls: "zhfont-sample-hand" },
     { id: "cute", sample: "你好呀", cls: "zhfont-sample-cute" },
   ];
+  const isZh = lang === "zh";
   const petDef = getPetDef(petType);
   const allPets = Object.values(PETS) as (typeof petDef)[];
   const normalPets = allPets.filter((p) => !p.special);
@@ -233,6 +236,24 @@ export default function SettingsContent() {
                   {s.label}
                 </button>
               ))}
+            </div>
+          </Section>
+
+          {/* Kamus sentuh */}
+          <Section title={t("settings.dict")} desc={t("settings.dict.desc")}>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setDictEnabled(true)}
+                className={btn(dictEnabled)}
+              >
+                📖 {t("settings.pet.on")}
+              </button>
+              <button
+                onClick={() => setDictEnabled(false)}
+                className={btn(!dictEnabled)}
+              >
+                {t("settings.pet.off")}
+              </button>
             </div>
           </Section>
 

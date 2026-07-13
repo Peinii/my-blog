@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSettings } from "@/lib/settings-context";
+import { LANGS, type Lang } from "@/lib/i18n";
 
 export default function Navbar() {
   const { t, ct, content, lang, mode, setLang, setMode } = useSettings();
@@ -53,13 +54,18 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
-          <button
-            onClick={() => setLang(lang === "en" ? "zh" : "en")}
-            aria-label="Toggle language"
-            className="rounded-md border border-gray-200 px-2 py-1 text-xs font-medium text-gray-600 transition-colors hover:border-accent hover:text-accent dark:border-gray-700 dark:text-gray-300"
+          <select
+            value={lang}
+            onChange={(e) => setLang(e.target.value as Lang)}
+            aria-label={t("settings.language")}
+            className="cursor-pointer rounded-md border border-gray-200 bg-transparent px-1.5 py-1 text-xs font-medium text-gray-600 transition-colors hover:border-accent hover:text-accent dark:border-gray-700 dark:text-gray-300 dark:[&>option]:bg-gray-900"
           >
-            {lang === "en" ? "中文" : "EN"}
-          </button>
+            {LANGS.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.label}
+              </option>
+            ))}
+          </select>
           <button
             onClick={() => setMode(mode === "dark" ? "light" : "dark")}
             aria-label="Toggle dark mode"
@@ -112,12 +118,18 @@ export default function Navbar() {
             ))}
 
             <div className="mt-2 flex gap-2 border-t border-gray-100 pt-3 dark:border-gray-800">
-              <button
-                onClick={() => setLang(lang === "en" ? "zh" : "en")}
-                className="flex min-h-[44px] flex-1 items-center justify-center rounded-lg border border-gray-200 text-sm font-medium text-gray-700 transition-colors hover:border-accent hover:text-accent dark:border-gray-700 dark:text-gray-200"
+              <select
+                value={lang}
+                onChange={(e) => setLang(e.target.value as Lang)}
+                aria-label={t("settings.language")}
+                className="min-h-[44px] flex-1 cursor-pointer rounded-lg border border-gray-200 bg-transparent px-2 text-sm font-medium text-gray-700 dark:border-gray-700 dark:text-gray-200 dark:[&>option]:bg-gray-900"
               >
-                🌐 {lang === "en" ? "中文" : "English"}
-              </button>
+                {LANGS.map((l) => (
+                  <option key={l.id} value={l.id}>
+                    🌐 {l.label}
+                  </option>
+                ))}
+              </select>
               <button
                 onClick={() => setMode(mode === "dark" ? "light" : "dark")}
                 className="flex min-h-[44px] flex-1 items-center justify-center rounded-lg border border-gray-200 text-sm font-medium text-gray-700 transition-colors hover:border-accent hover:text-accent dark:border-gray-700 dark:text-gray-200"
