@@ -617,6 +617,20 @@ html.dark[data-uistyle="clay"] main button {
 html[data-uistyle="clay"] main article {
   overflow: hidden;
 }
+/* Kartu level-halaman (artikel & section "you might also like")
+   tidak punya padding bawaan — beri napas saat jadi kotak clay. */
+html[data-uistyle="clay"] main > article,
+html[data-uistyle="clay"] main > section {
+  padding: 1.25rem;
+}
+@media (min-width: 640px) {
+  html[data-uistyle="clay"] main > article,
+  html[data-uistyle="clay"] main > section {
+    padding: 2rem;
+  }
+}
+/* Kartu artikel di grid (PostCard) sudah punya padding sendiri —
+   jangan dipadding dobel; hanya pastikan sudut & bayangannya rapi. */
 html[data-uistyle="clay"] .pet-bubble,
 html[data-uistyle="clay"] .garden-flower svg {
   filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.14));
