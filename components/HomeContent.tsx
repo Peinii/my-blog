@@ -14,6 +14,7 @@ export default function HomeContent({ posts }: { posts: Post[] }) {
     <div>
       {/* Hero */}
       <section className="relative py-12 text-center sm:py-16">
+        <span className="hero-glow" aria-hidden />
         {/* sparkles dekoratif */}
         <span className="sparkle left-[12%] top-6 text-xl" aria-hidden>✦</span>
         <span className="sparkle right-[15%] top-12 text-sm [animation-delay:0.8s]" aria-hidden>✦</span>

@@ -56,6 +56,10 @@ export default function SettingsContent() {
     theme,
     dictEnabled,
     setDictEnabled,
+    fancyFx,
+    setFancyFx,
+    uiStyle,
+    setUiStyle,
     setLang,
     setMode,
     setAccent,
@@ -236,6 +240,45 @@ export default function SettingsContent() {
                   {s.label}
                 </button>
               ))}
+            </div>
+          </Section>
+
+          {/* Design style: flat / claymorphism */}
+          <Section
+            title={t("settings.uistyle")}
+            desc={t("settings.uistyle.desc")}
+          >
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setUiStyle("flat")}
+                className={btn(uiStyle === "flat")}
+              >
+                ▭ {t("settings.uistyle.flat")}
+              </button>
+              <button
+                onClick={() => setUiStyle("clay")}
+                className={btn(uiStyle === "clay")}
+              >
+                🏺 {t("settings.uistyle.clay")}
+              </button>
+            </div>
+          </Section>
+
+          {/* Efek premium */}
+          <Section title={t("settings.fx")} desc={t("settings.fx.desc")}>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setFancyFx(true)}
+                className={btn(fancyFx)}
+              >
+                ✨ {t("settings.pet.on")}
+              </button>
+              <button
+                onClick={() => setFancyFx(false)}
+                className={btn(!fancyFx)}
+              >
+                {t("settings.pet.off")}
+              </button>
             </div>
           </Section>
 

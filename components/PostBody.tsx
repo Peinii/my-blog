@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { urlFor } from "@/lib/sanity.client";
 import { canvaEmbedUrl, isCanvaShortLink } from "@/lib/canva";
+import { codepenEmbedUrl } from "@/lib/codepen";
 
 function CanvaEmbed({ url }: { url?: string }) {
   const direct = canvaEmbedUrl(url);
@@ -51,6 +52,21 @@ function CanvaEmbed({ url }: { url?: string }) {
 const components: PortableTextComponents = {
   types: {
     canvaEmbed: ({ value }) => <CanvaEmbed url={value?.url} />,
+    codepenEmbed: ({ value }) => {
+      const src = codepenEmbedUrl(value?.url);
+      if (!src) return null;
+      return (
+        <div className="my-6 overflow-hidden rounded-lg border border-gray-100 dark:border-gray-800">
+          <iframe
+            src={src}
+            loading="lazy"
+            allowFullScreen
+            style={{ width: "100%", height: 420 }}
+            title="CodePen embed"
+          />
+        </div>
+      );
+    },
     image: ({ value }) =>
       value?.asset ? (
         <div className="relative my-6 aspect-video overflow-hidden rounded-lg">
