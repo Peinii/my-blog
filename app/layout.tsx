@@ -64,7 +64,7 @@ try {
   document.documentElement.setAttribute('data-zhfont', s.zhFont || 'kai');
   document.documentElement.setAttribute('data-enfont', s.enFont || 'default');
   document.documentElement.setAttribute('data-theme', s.theme || 'classic');
-  if (s.lang === 'zh') document.documentElement.setAttribute('lang', 'zh-CN');
+  document.documentElement.setAttribute('lang', s.lang === 'zh' ? 'zh-CN' : (s.lang || 'en'));
 } catch (e) {}
 `;
 
@@ -100,7 +100,7 @@ export default async function RootLayout({
         {/* Font English pilihan (Settings) */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=IM+Fell+English+SC&family=Great+Vibes&family=Dancing+Script:wght@400;600&family=Pacifico&family=Playfair+Display:wght@400;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=IM+Fell+English+SC&family=Great+Vibes&family=Dancing+Script:wght@400;600&family=Pacifico&family=Playfair+Display:wght@400;600&family=Comfortaa:wght@400;600&family=Parisienne&family=Lora:wght@400;600&display=swap"
         />
       </head>
       <body className="flex min-h-screen flex-col">

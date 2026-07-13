@@ -282,27 +282,38 @@ html[lang="zh-CN"][data-zhfont="cute"] button {
 .zhfont-sample-cute { font-family: "ZCOOL KuaiLe", sans-serif; }
 
 /* ===== Font English — 7 pilihan di Settings ===== */
-html[lang="en"][data-enfont="cormorant"] body {
+html:not([lang="zh-CN"])[data-enfont="cormorant"] body {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1.06em;
 }
-html[lang="en"][data-enfont="imfell"] body {
+html:not([lang="zh-CN"])[data-enfont="imfell"] body {
   font-family: "IM Fell English SC", Georgia, serif;
 }
-html[lang="en"][data-enfont="vibes"] body {
+html:not([lang="zh-CN"])[data-enfont="vibes"] body {
   font-family: "Great Vibes", cursive;
   font-size: 1.12em;
 }
-html[lang="en"][data-enfont="dancing"] body {
+html:not([lang="zh-CN"])[data-enfont="dancing"] body {
   font-family: "Dancing Script", cursive;
   font-size: 1.08em;
 }
-html[lang="en"][data-enfont="pacifico"] body {
+html:not([lang="zh-CN"])[data-enfont="pacifico"] body {
   font-family: "Pacifico", cursive;
 }
-html[lang="en"][data-enfont="playfair"] body {
+html:not([lang="zh-CN"])[data-enfont="playfair"] body {
   font-family: "Playfair Display", Georgia, serif;
 }
+html:not([lang="zh-CN"])[data-enfont="comfortaa"] body {
+  font-family: "Comfortaa", ui-sans-serif, sans-serif;
+}
+html:not([lang="zh-CN"])[data-enfont="parisienne"] body {
+  font-family: "Parisienne", cursive;
+  font-size: 1.15em;
+}
+html:not([lang="zh-CN"])[data-enfont="lora"] body {
+  font-family: "Lora", Georgia, serif;
+}
+
 /* Code block tetap monospace apa pun fontnya */
 html[data-enfont] .prose-article pre,
 html[data-enfont] .prose-article code {
@@ -316,6 +327,9 @@ html[data-enfont] .prose-article code {
 .enfont-sample-dancing { font-family: "Dancing Script", cursive; }
 .enfont-sample-pacifico { font-family: "Pacifico", cursive; }
 .enfont-sample-playfair { font-family: "Playfair Display", serif; }
+.enfont-sample-comfortaa { font-family: "Comfortaa", sans-serif; }
+.enfont-sample-parisienne { font-family: "Parisienne", cursive; }
+.enfont-sample-lora { font-family: "Lora", serif; }
 
 /* ===== Pet kucing 🐱 ===== */
 .pet-wrap {
