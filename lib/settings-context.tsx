@@ -30,7 +30,7 @@ export type EnFont =
   | "comfortaa"
   | "parisienne";
 export type Theme = "classic" | "sakura" | "matcha" | "midnight" | "ocean";
-export type UiStyle = "flat" | "clay";
+export type UiStyle = "flat" | "clay" | "glass" | "brutal" | "neu";
 export type { PetType } from "./pets";
 import type { PetType } from "./pets";
 
