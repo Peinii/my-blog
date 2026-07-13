@@ -469,6 +469,27 @@ html[data-enfont] .prose-article code {
   box-shadow: 2.5px 2.5px 0 var(--accent);
 }
 
+/* ===== Popup kamus sentuh ===== */
+.dict-popup {
+  position: fixed;
+  z-index: 60;
+  width: 280px;
+  max-width: calc(100vw - 24px);
+  background: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.16);
+  padding: 12px 14px;
+  animation: pet-pop 0.18s ease;
+}
+.dark .dict-popup {
+  background: #111827;
+}
+.dict-hint {
+  border: 1px dashed var(--accent);
+  background: var(--accent-soft);
+}
+
 /* ===== Isi artikel (Portable Text) ===== */
 .prose-article h2 {
   @apply mt-8 mb-3 text-2xl font-bold;
