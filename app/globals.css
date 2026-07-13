@@ -619,13 +619,13 @@ html[data-uistyle="clay"] main article {
 }
 /* Kartu level-halaman (artikel & section "you might also like")
    tidak punya padding bawaan — beri napas saat jadi kotak clay. */
-html[data-uistyle="clay"] main > article,
-html[data-uistyle="clay"] main > section {
+html:not([data-uistyle="flat"]) main > article,
+html:not([data-uistyle="flat"]) main > section {
   padding: 1.25rem;
 }
 @media (min-width: 640px) {
-  html[data-uistyle="clay"] main > article,
-  html[data-uistyle="clay"] main > section {
+  html:not([data-uistyle="flat"]) main > article,
+  html:not([data-uistyle="flat"]) main > section {
     padding: 2rem;
   }
 }
@@ -634,6 +634,139 @@ html[data-uistyle="clay"] main > section {
 html[data-uistyle="clay"] .pet-bubble,
 html[data-uistyle="clay"] .garden-flower svg {
   filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.14));
+}
+
+
+/* ===== Glassmorphism 🫧 ===== */
+html[data-uistyle="glass"] main article,
+html[data-uistyle="glass"] main section,
+html[data-uistyle="glass"] main input,
+html[data-uistyle="glass"] main select,
+html[data-uistyle="glass"] .dict-popup,
+html[data-uistyle="glass"] .dict-hint {
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  backdrop-filter: blur(14px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.3);
+}
+html.dark[data-uistyle="glass"] main article,
+html.dark[data-uistyle="glass"] main section,
+html.dark[data-uistyle="glass"] main input,
+html.dark[data-uistyle="glass"] main select,
+html.dark[data-uistyle="glass"] .dict-popup,
+html.dark[data-uistyle="glass"] .dict-hint {
+  background-color: rgba(17, 24, 39, 0.45);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+html[data-uistyle="glass"] main button {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.35);
+}
+html.dark[data-uistyle="glass"] main button {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+/* pola titik lebih terasa di balik kaca */
+html[data-uistyle="glass"] body {
+  background-image: radial-gradient(var(--accent-soft) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+
+/* ===== Neubrutalism ⬛ ===== */
+html[data-uistyle="brutal"] main article,
+html[data-uistyle="brutal"] main section,
+html[data-uistyle="brutal"] main input,
+html[data-uistyle="brutal"] main select,
+html[data-uistyle="brutal"] .dict-popup,
+html[data-uistyle="brutal"] .dict-hint {
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 2px solid #1a1a2e;
+  box-shadow: 5px 5px 0 var(--accent);
+}
+html.dark[data-uistyle="brutal"] main article,
+html.dark[data-uistyle="brutal"] main section,
+html.dark[data-uistyle="brutal"] main input,
+html.dark[data-uistyle="brutal"] main select,
+html.dark[data-uistyle="brutal"] .dict-popup,
+html.dark[data-uistyle="brutal"] .dict-hint {
+  background-color: #111827;
+  border-color: #e5e7eb;
+}
+html[data-uistyle="brutal"] main button {
+  border-radius: 8px;
+  border: 2px solid #1a1a2e;
+  box-shadow: 3px 3px 0 var(--accent);
+}
+html.dark[data-uistyle="brutal"] main button {
+  border-color: #e5e7eb;
+}
+html[data-uistyle="brutal"] main button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--accent);
+}
+html[data-uistyle="brutal"] .tag-sticker {
+  box-shadow: 2.5px 2.5px 0 #1a1a2e;
+}
+
+/* ===== Neumorphism ☁️ (soft UI) ===== */
+html[data-uistyle="neu"] body {
+  background-color: #eef1f6;
+  background-image: none;
+}
+html.dark[data-uistyle="neu"] body {
+  background-color: #181d27;
+  background-image: none;
+}
+html[data-uistyle="neu"] main article,
+html[data-uistyle="neu"] main section,
+html[data-uistyle="neu"] .dict-popup,
+html[data-uistyle="neu"] .dict-hint {
+  border-radius: 22px;
+  border-color: transparent;
+  background-color: #eef1f6;
+  box-shadow:
+    9px 9px 20px rgba(163, 173, 190, 0.55),
+    -9px -9px 20px rgba(255, 255, 255, 0.95);
+}
+html.dark[data-uistyle="neu"] main article,
+html.dark[data-uistyle="neu"] main section,
+html.dark[data-uistyle="neu"] .dict-popup,
+html.dark[data-uistyle="neu"] .dict-hint {
+  background-color: #181d27;
+  box-shadow:
+    9px 9px 20px rgba(0, 0, 0, 0.55),
+    -9px -9px 20px rgba(255, 255, 255, 0.04);
+}
+html[data-uistyle="neu"] main input,
+html[data-uistyle="neu"] main select {
+  border-radius: 16px;
+  border-color: transparent;
+  background-color: #eef1f6;
+  box-shadow:
+    inset 4px 4px 8px rgba(163, 173, 190, 0.5),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+html.dark[data-uistyle="neu"] main input,
+html.dark[data-uistyle="neu"] main select {
+  background-color: #181d27;
+  box-shadow:
+    inset 4px 4px 8px rgba(0, 0, 0, 0.5),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.04);
+}
+html[data-uistyle="neu"] main button {
+  border-radius: 16px;
+  border-color: transparent;
+  box-shadow:
+    5px 5px 10px rgba(163, 173, 190, 0.5),
+    -5px -5px 10px rgba(255, 255, 255, 0.9);
+}
+html.dark[data-uistyle="neu"] main button {
+  box-shadow:
+    5px 5px 10px rgba(0, 0, 0, 0.5),
+    -5px -5px 10px rgba(255, 255, 255, 0.04);
 }
 
 /* ===== Popup kamus sentuh ===== */
