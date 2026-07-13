@@ -9,6 +9,7 @@ import Pet from "@/components/Pet";
 import ScrollTopPaw from "@/components/ScrollTopPaw";
 import ThemeParticles from "@/components/ThemeParticles";
 import SWRegister from "@/components/SWRegister";
+import FancyFx from "@/components/FancyFx";
 
 // viewportFit "cover" mengaktifkan safe-area untuk layar berponi/lipat.
 export const viewport: Viewport = {
@@ -64,6 +65,7 @@ try {
   document.documentElement.setAttribute('data-zhfont', s.zhFont || 'kai');
   document.documentElement.setAttribute('data-enfont', s.enFont || 'default');
   document.documentElement.setAttribute('data-theme', s.theme || 'classic');
+  document.documentElement.setAttribute('data-uistyle', s.uiStyle || 'flat');
   document.documentElement.setAttribute('lang', s.lang === 'zh' ? 'zh-CN' : (s.lang || 'en'));
 } catch (e) {}
 `;
@@ -114,6 +116,7 @@ export default async function RootLayout({
           <Pet />
           <ScrollTopPaw />
           <SWRegister />
+          <FancyFx />
         </SettingsProvider>
       </body>
     </html>
