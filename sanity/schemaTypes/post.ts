@@ -42,6 +42,26 @@ export const post = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: "language",
+      title: "Language (kamus sentuh)",
+      description:
+        "Bahasa isi artikel. Selain English: pembaca bisa tap/hover kata untuk melihat artinya (English). 中文 = pinyin + arti · 日本語 = kana + arti · de/fr/es/it via Wiktionary.",
+      type: "string",
+      initialValue: "en",
+      options: {
+        list: [
+          { title: "English (tanpa kamus)", value: "en" },
+          { title: "中文 (Mandarin)", value: "zh" },
+          { title: "日本語 (Japanese)", value: "ja" },
+          { title: "Deutsch (German)", value: "de" },
+          { title: "Français (French)", value: "fr" },
+          { title: "Español (Spanish)", value: "es" },
+          { title: "Italiano (Italian)", value: "it" },
+        ],
+        layout: "dropdown",
+      },
+    }),
+    defineField({
       name: "tags",
       title: "Tags",
       type: "array",
