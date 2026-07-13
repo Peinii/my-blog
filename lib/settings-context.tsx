@@ -25,7 +25,10 @@ export type EnFont =
   | "vibes"
   | "dancing"
   | "pacifico"
-  | "playfair";
+  | "playfair"
+  | "lora"
+  | "comfortaa"
+  | "parisienne";
 export type Theme = "classic" | "sakura" | "matcha" | "midnight" | "ocean";
 export type { PetType } from "./pets";
 import type { PetType } from "./pets";
@@ -42,6 +45,7 @@ interface Settings {
   zhFont: ZhFont;
   enFont: EnFont;
   theme: Theme;
+  dictEnabled: boolean;
 }
 
 interface SettingsCtx extends Settings {
@@ -59,6 +63,7 @@ interface SettingsCtx extends Settings {
   setZhFont: (f: ZhFont) => void;
   setEnFont: (f: EnFont) => void;
   setTheme: (t: Theme) => void;
+  setDictEnabled: (d: boolean) => void;
   setPetColor: (c: string) => void;
   reset: () => void;
 }
@@ -75,6 +80,7 @@ const DEFAULTS: Settings = {
   zhFont: "kai",
   enFont: "default",
   theme: "classic",
+  dictEnabled: true,
 };
 const STORAGE_KEY = "peini-settings";
 
@@ -93,6 +99,7 @@ const Ctx = createContext<SettingsCtx>({
   setZhFont: () => {},
   setEnFont: () => {},
   setTheme: () => {},
+  setDictEnabled: () => {},
   setPetColor: () => {},
   reset: () => {},
 });
@@ -110,7 +117,7 @@ function apply(s: Settings) {
   root.setAttribute("data-zhfont", s.zhFont);
   root.setAttribute("data-enfont", s.enFont);
   root.setAttribute("data-theme", s.theme);
-  root.setAttribute("lang", s.lang === "zh" ? "zh-CN" : "en");
+  root.setAttribute("lang", s.lang === "zh" ? "zh-CN" : s.lang);
 }
 
 export function SettingsProvider({
@@ -176,6 +183,7 @@ export function SettingsProvider({
     setZhFont: (zhFont) => update({ zhFont }),
     setEnFont: (enFont) => update({ enFont }),
     setTheme: (theme) => update({ theme }),
+    setDictEnabled: (dictEnabled) => update({ dictEnabled }),
     setPetColor: (petColor) => update({ petColor }),
     reset: () => update({ ...DEFAULTS }),
   };

@@ -49,6 +49,7 @@ export function pickLocalized(
   lang: Lang
 ): string | undefined {
   if (!value) return undefined;
-  const chosen = value[lang]?.trim() || value.en?.trim();
+  const v = (value as Record<string, string | undefined>)[lang];
+  const chosen = v?.trim() || value.en?.trim();
   return chosen || undefined;
 }
