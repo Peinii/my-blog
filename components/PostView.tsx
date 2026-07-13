@@ -8,6 +8,7 @@ import { formatDate } from "./PostCard";
 import PostBody from "./PostBody";
 import Reveal from "./Reveal";
 import ShareButtons from "./ShareButtons";
+import TapDict from "./TapDict";
 import type { Post } from "@/lib/queries";
 
 export default function PostView({
@@ -73,9 +74,22 @@ export default function PostView({
           </div>
         )}
 
-        <div className="mt-8">
-          {post.body && <PostBody body={post.body} />}
-        </div>
+        {post.language && post.language !== "en" ? (
+          <>
+            <p className="dict-hint mt-6 rounded-lg px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
+              {t("post.dict.hint")}
+            </p>
+            <TapDict lang={post.language}>
+              <div className="mt-6">
+                {post.body && <PostBody body={post.body} />}
+              </div>
+            </TapDict>
+          </>
+        ) : (
+          <div className="mt-8">
+            {post.body && <PostBody body={post.body} />}
+          </div>
+        )}
 
         <ShareButtons slug={post.slug} title={post.title} />
       </Reveal>
