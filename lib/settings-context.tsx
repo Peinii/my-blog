@@ -30,6 +30,7 @@ export type EnFont =
   | "comfortaa"
   | "parisienne";
 export type Theme = "classic" | "sakura" | "matcha" | "midnight" | "ocean";
+export type UiStyle = "flat" | "clay";
 export type { PetType } from "./pets";
 import type { PetType } from "./pets";
 
@@ -46,6 +47,8 @@ interface Settings {
   enFont: EnFont;
   theme: Theme;
   dictEnabled: boolean;
+  fancyFx: boolean;
+  uiStyle: UiStyle;
 }
 
 interface SettingsCtx extends Settings {
@@ -64,6 +67,8 @@ interface SettingsCtx extends Settings {
   setEnFont: (f: EnFont) => void;
   setTheme: (t: Theme) => void;
   setDictEnabled: (d: boolean) => void;
+  setFancyFx: (f: boolean) => void;
+  setUiStyle: (u: UiStyle) => void;
   setPetColor: (c: string) => void;
   reset: () => void;
 }
@@ -81,6 +86,8 @@ const DEFAULTS: Settings = {
   enFont: "default",
   theme: "classic",
   dictEnabled: true,
+  fancyFx: true,
+  uiStyle: "flat",
 };
 const STORAGE_KEY = "peini-settings";
 
@@ -100,6 +107,8 @@ const Ctx = createContext<SettingsCtx>({
   setEnFont: () => {},
   setTheme: () => {},
   setDictEnabled: () => {},
+  setFancyFx: () => {},
+  setUiStyle: () => {},
   setPetColor: () => {},
   reset: () => {},
 });
@@ -117,6 +126,7 @@ function apply(s: Settings) {
   root.setAttribute("data-zhfont", s.zhFont);
   root.setAttribute("data-enfont", s.enFont);
   root.setAttribute("data-theme", s.theme);
+  root.setAttribute("data-uistyle", s.uiStyle);
   root.setAttribute("lang", s.lang === "zh" ? "zh-CN" : s.lang);
 }
 
@@ -184,6 +194,8 @@ export function SettingsProvider({
     setEnFont: (enFont) => update({ enFont }),
     setTheme: (theme) => update({ theme }),
     setDictEnabled: (dictEnabled) => update({ dictEnabled }),
+    setFancyFx: (fancyFx) => update({ fancyFx }),
+    setUiStyle: (uiStyle) => update({ uiStyle }),
     setPetColor: (petColor) => update({ petColor }),
     reset: () => update({ ...DEFAULTS }),
   };

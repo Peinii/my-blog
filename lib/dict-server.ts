@@ -1,10 +1,13 @@
-// Mesin kamus sisi server.
-// zh: CC-CEDICT (CC BY-SA 4.0) — longest match + pinyin
-// ja: JMdict common (EDRDG) — longest match + deinfleksi ringan
-// de/fr/es/it: Wiktionary REST API (definisi bahasa Inggris)
+// Mesin kamus sisi server — loader ANTI-GAGAL 3 lapis:
+//   1) baca file lokal ./public/dict (ikut deploy sebagai aset statis)
+//   2) baca ./data (lokasi lama, kalau masih ada)
+//   3) fetch dari CDN sendiri (${NEXT_PUBLIC_SITE_URL}/dict/…) — jalan
+//      di mana pun, bahkan bila file tracing serverless meleset.
+// zh: CC-CEDICT (CC BY-SA 4.0) · ja: JMdict (EDRDG) · de/fr/es/it: Wiktionary
 import fs from "fs";
 import path from "path";
 import zlib from "zlib";
+import { siteUrl } from "./sanity.env";
 
 export interface DictResult {
   word: string;
@@ -14,48 +17,96 @@ export interface DictResult {
   source: string;
 }
 
-// ---------- loader (sekali per instance) ----------
-let zhMap: Map<string, string[]> | null = null;
-let jaMap: Map<string, string[]> | null = null;
+let zhPromise: Promise<Map<string, string[]>> | null = null;
+let jaPromise: Promise<Map<string, string[]>> | null = null;
+export const loadInfo: Record<string, string> = {};
 
-function readTsvGz(name: string): string {
-  const p = path.join(process.cwd(), "data", name);
-  return zlib.gunzipSync(fs.readFileSync(p)).toString("utf-8");
-}
-
-function getZh(): Map<string, string[]> {
-  if (zhMap) return zhMap;
-  zhMap = new Map();
-  for (const line of readTsvGz("cedict.tsv.gz").split("\n")) {
-    const parts = line.split("\t");
-    if (parts.length < 4) continue;
-    for (const key of new Set([parts[0], parts[1]])) {
-      const arr = zhMap.get(key);
-      if (arr) {
-        if (arr.length < 3) arr.push(line);
-      } else zhMap.set(key, [line]);
+async function loadTsv(name: string): Promise<string> {
+  const candidates = [
+    path.join(process.cwd(), "public", "dict", name),
+    path.join(process.cwd(), "data", name),
+  ];
+  for (const p of candidates) {
+    try {
+      const text = zlib.gunzipSync(fs.readFileSync(p)).toString("utf-8");
+      loadInfo[name] = `fs:${p}`;
+      return text;
+    } catch {
+      /* coba kandidat berikutnya */
     }
   }
-  return zhMap;
+  // Lapis 3: ambil dari CDN sendiri
+  const res = await fetch(`${siteUrl}/dict/${name}`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`dict fetch ${name}: ${res.status}`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  const text = zlib.gunzipSync(buf).toString("utf-8");
+  loadInfo[name] = "cdn";
+  return text;
 }
 
-function getJa(): Map<string, string[]> {
-  if (jaMap) return jaMap;
-  jaMap = new Map();
-  for (const line of readTsvGz("jmdict.tsv.gz").split("\n")) {
+function parseTsv(text: string, minCols: number): Map<string, string[]> {
+  const map = new Map<string, string[]>();
+  for (const line of text.split("\n")) {
     const parts = line.split("\t");
-    if (parts.length < 3) continue;
-    const arr = jaMap.get(parts[0]);
-    if (arr) {
-      if (arr.length < 3) arr.push(line);
-    } else jaMap.set(parts[0], [line]);
+    if (parts.length < minCols) continue;
+    const keys = minCols >= 4 ? new Set([parts[0], parts[1]]) : [parts[0]];
+    for (const key of keys) {
+      const arr = map.get(key);
+      if (arr) {
+        if (arr.length < 3) arr.push(line);
+      } else map.set(key, [line]);
+    }
   }
-  return jaMap;
+  return map;
+}
+
+function getZh(): Promise<Map<string, string[]>> {
+  if (!zhPromise) {
+    zhPromise = loadTsv("cedict.tsv.gz")
+      .then((t) => parseTsv(t, 4))
+      .catch((e) => {
+        zhPromise = null; // biar dicoba ulang di request berikutnya
+        throw e;
+      });
+  }
+  return zhPromise;
+}
+
+function getJa(): Promise<Map<string, string[]>> {
+  if (!jaPromise) {
+    jaPromise = loadTsv("jmdict.tsv.gz")
+      .then((t) => parseTsv(t, 3))
+      .catch((e) => {
+        jaPromise = null;
+        throw e;
+      });
+  }
+  return jaPromise;
+}
+
+// Untuk /api/dict?diag=1 — cek kesehatan kamus dalam sekali buka.
+export async function diagnose() {
+  const out: Record<string, unknown> = {};
+  try {
+    const zh = await getZh();
+    out.zh = { entries: zh.size, loadedFrom: loadInfo["cedict.tsv.gz"] };
+  } catch (e) {
+    out.zh = { error: String(e).slice(0, 160) };
+  }
+  try {
+    const ja = await getJa();
+    out.ja = { entries: ja.size, loadedFrom: loadInfo["jmdict.tsv.gz"] };
+  } catch (e) {
+    out.ja = { error: String(e).slice(0, 160) };
+  }
+  out.euro = "via Wiktionary (tanpa file lokal)";
+  out.siteUrl = siteUrl;
+  return out;
 }
 
 // ---------- zh: longest match ----------
-export function lookupZh(ctx: string): DictResult | null {
-  const dict = getZh();
+export async function lookupZh(ctx: string): Promise<DictResult | null> {
+  const dict = await getZh();
   const max = Math.min(ctx.length, 8);
   for (let len = max; len >= 1; len--) {
     const cand = ctx.slice(0, len);
@@ -112,8 +163,8 @@ function jaCandidates(surface: string): string[] {
   return out;
 }
 
-export function lookupJa(ctx: string): DictResult | null {
-  const dict = getJa();
+export async function lookupJa(ctx: string): Promise<DictResult | null> {
+  const dict = await getJa();
   const max = Math.min(ctx.length, 10);
   for (let len = max; len >= 1; len--) {
     const surface = ctx.slice(0, len);
