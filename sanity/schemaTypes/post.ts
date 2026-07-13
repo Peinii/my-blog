@@ -85,6 +85,30 @@ export const post = defineType({
         },
         {
           type: "object",
+          name: "codepenEmbed",
+          title: "CodePen (demo kode)",
+          fields: [
+            defineField({
+              name: "url",
+              title: "Link CodePen (codepen.io/user/pen/…)",
+              type: "url",
+              validation: (r) =>
+                r.required().custom((val: string | undefined) =>
+                  val && val.includes("codepen.io/")
+                    ? true
+                    : "Harus link CodePen (codepen.io/…)"
+                ),
+            }),
+          ],
+          preview: {
+            select: { url: "url" },
+            prepare({ url }: { url?: string }) {
+              return { title: "🖥️ CodePen embed", subtitle: url };
+            },
+          },
+        },
+        {
+          type: "object",
           name: "canvaEmbed",
           title: "Canva (slide/desain)",
           fields: [
