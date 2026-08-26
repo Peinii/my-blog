@@ -62,6 +62,14 @@ export const post = defineType({
       },
     }),
     defineField({
+      name: "audio",
+      title: "Voiceover (opsional)",
+      description:
+        "Rekaman suara untuk artikel ini (MP3/M4A). Muncul sebagai pemutar dengan kontrol kecepatan di atas artikel.",
+      type: "file",
+      options: { accept: "audio/*" },
+    }),
+    defineField({
       name: "tags",
       title: "Tags",
       type: "array",
@@ -82,6 +90,31 @@ export const post = defineType({
         { type: "image", options: { hotspot: true } },
         {
           type: "code",
+        },
+        {
+          type: "object",
+          name: "grammarNote",
+          title: "Grammar note (kotak tata bahasa)",
+          fields: [
+            defineField({ name: "title", title: "Judul", type: "string" }),
+            defineField({
+              name: "pattern",
+              title: "Pola (mis. 虽然…但是…)",
+              type: "string",
+            }),
+            defineField({
+              name: "body",
+              title: "Penjelasan",
+              type: "text",
+              rows: 4,
+            }),
+          ],
+          preview: {
+            select: { title: "title", subtitle: "pattern" },
+            prepare({ title, subtitle }: { title?: string; subtitle?: string }) {
+              return { title: "📘 " + (title || "Grammar note"), subtitle };
+            },
+          },
         },
         {
           type: "object",
