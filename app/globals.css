@@ -769,6 +769,69 @@ html.dark[data-uistyle="neu"] main button {
     -5px -5px 10px rgba(255, 255, 255, 0.04);
 }
 
+
+/* ===== Learning Mode: ruby pinyin, sorotan, kartu, stroke order ===== */
+ruby.zh-tok {
+  ruby-position: over;
+  -webkit-ruby-position: before;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+ruby.zh-tok:hover {
+  background-color: var(--accent-soft);
+}
+ruby.zh-tok rt {
+  font-size: 0.52em;
+  color: var(--accent);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+/* beri ruang ekstra saat pinyin aktif */
+.prose-article p:has(ruby.zh-tok rt:not(:empty)),
+.prose-article h2:has(ruby.zh-tok rt:not(:empty)),
+.prose-article h3:has(ruby.zh-tok rt:not(:empty)) {
+  line-height: 2.2;
+}
+
+.block-speaking {
+  background-color: var(--accent-soft);
+  border-radius: 6px;
+  box-shadow: 0 0 0 6px var(--accent-soft);
+  transition: background-color 0.2s ease;
+}
+
+.grammar-note {
+  background-color: var(--accent-soft);
+  border-left: 4px solid var(--accent);
+}
+
+.stroke-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 16px;
+}
+.stroke-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  max-width: 92vw;
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.4);
+}
+.dark .stroke-modal {
+  background: #111827;
+}
+.stroke-cell {
+  border: 1px dashed var(--accent-soft);
+  border-radius: 8px;
+}
+
 /* ===== Popup kamus sentuh ===== */
 .dict-popup {
   position: fixed;
