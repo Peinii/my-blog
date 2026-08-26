@@ -60,6 +60,12 @@ export default function SettingsContent() {
     setFancyFx,
     uiStyle,
     setUiStyle,
+    pinyin,
+    setPinyin,
+    script,
+    setScript,
+    ttsRate,
+    setTtsRate,
     setLang,
     setMode,
     setAccent,
@@ -284,6 +290,54 @@ export default function SettingsContent() {
               >
                 {t("settings.pet.off")}
               </button>
+            </div>
+          </Section>
+
+          {/* Belajar bahasa */}
+          <Section title={t("settings.learn")} desc={t("settings.learn.desc")}>
+            <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+              {t("settings.pinyin")}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button onClick={() => setPinyin(true)} className={btn(pinyin)}>
+                拼 {t("settings.pet.on")}
+              </button>
+              <button onClick={() => setPinyin(false)} className={btn(!pinyin)}>
+                {t("settings.pet.off")}
+              </button>
+            </div>
+
+            <p className="mb-2 mt-4 text-sm font-medium text-gray-600 dark:text-gray-300">
+              {t("settings.script")}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setScript("simp")}
+                className={btn(script === "simp")}
+              >
+                {t("settings.script.simp")}
+              </button>
+              <button
+                onClick={() => setScript("trad")}
+                className={btn(script === "trad")}
+              >
+                {t("settings.script.trad")}
+              </button>
+            </div>
+
+            <p className="mb-2 mt-4 text-sm font-medium text-gray-600 dark:text-gray-300">
+              {t("settings.tts.rate")}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {[0.6, 0.8, 1].map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setTtsRate(r)}
+                  className={btn(ttsRate === r)}
+                >
+                  {r}×
+                </button>
+              ))}
             </div>
           </Section>
 

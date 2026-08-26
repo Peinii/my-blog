@@ -5,7 +5,9 @@ import Image from "next/image";
 import { useSettings } from "@/lib/settings-context";
 import { urlFor } from "@/lib/sanity.client";
 import { formatDate } from "./PostCard";
-import PostBody from "./PostBody";
+import PostBody, { blockText } from "./PostBody";
+import ReadAloud from "./ReadAloud";
+import AudioPlayer from "./AudioPlayer";
 import Reveal from "./Reveal";
 import ShareButtons from "./ShareButtons";
 import TapDict from "./TapDict";
@@ -18,7 +20,29 @@ export default function PostView({
   post: Post;
   minutes?: number;
 }) {
-  const { t, lang, dictEnabled } = useSettings();
+  const {
+    t,
+    lang,
+    dictEnabled,
+    pinyin,
+    script,
+    setPinyin,
+    setScript,
+  } = useSettings();
+
+  const learning = !!post.language && post.language !== "en";
+  const isZh = post.language === "zh";
+  const speakBlocks = (post.body || [])
+    .filter((b: any) => b?._type === "block")
+    .map((b: any) => ({ key: b._key as string, text: blockText(b) }))
+    .filter((b: { text: string }) => b.text.trim().length > 0);
+
+  const learnBtn = (active: boolean) =>
+    `rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
+      active
+        ? "border-accent bg-accent-soft text-accent"
+        : "border-gray-200 text-gray-600 hover:border-accent hover:text-accent dark:border-gray-700 dark:text-gray-300"
+    }`;
 
   return (
     <article className="mx-auto max-w-content">
@@ -74,16 +98,63 @@ export default function PostView({
           </div>
         )}
 
-        {dictEnabled && post.language && post.language !== "en" ? (
+        {learning ? (
           <>
-            <p className="dict-hint mt-6 rounded-lg px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
-              {t("post.dict.hint")}
-            </p>
-            <TapDict lang={post.language}>
+            {/* Panel belajar */}
+            <div className="dict-hint mt-6 rounded-lg px-3 py-2.5">
+              {dictEnabled && (
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  {t("post.dict.hint")}
+                </p>
+              )}
+              {isZh && (
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => setPinyin(!pinyin)}
+                    className={learnBtn(pinyin)}
+                  >
+                    拼 {t("post.pinyin")} {pinyin ? "ON" : "OFF"}
+                  </button>
+                  <button
+                    onClick={() => setScript(script === "simp" ? "trad" : "simp")}
+                    className={learnBtn(script === "trad")}
+                  >
+                    {script === "trad" ? "繁體" : "简体"}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {post.audioUrl && <AudioPlayer src={post.audioUrl} />}
+            {speakBlocks.length > 0 && (
+              <ReadAloud blocks={speakBlocks} lang={post.language!} />
+            )}
+
+            {dictEnabled ? (
+              <TapDict lang={post.language!}>
+                <div className="mt-6">
+                  {post.body && (
+                    <PostBody
+                      body={post.body}
+                      annotate={isZh}
+                      pinyin={isZh && pinyin}
+                      script={script}
+                    />
+                  )}
+                </div>
+              </TapDict>
+            ) : (
               <div className="mt-6">
-                {post.body && <PostBody body={post.body} />}
+                {post.body && (
+                  <PostBody
+                    body={post.body}
+                    annotate={isZh}
+                    pinyin={isZh && pinyin}
+                    script={script}
+                  />
+                )}
               </div>
-            </TapDict>
+            )}
           </>
         ) : (
           <div className="mt-8">

@@ -8,11 +8,15 @@ import {
   type ReactNode,
 } from "react";
 import { useSettings } from "@/lib/settings-context";
+import { speak } from "@/lib/speak";
+import { addWord, isSaved, removeWord } from "@/lib/mywords";
+import StrokeOrder from "./StrokeOrder";
 
 interface DictData {
   word?: string;
   reading?: string;
   alt?: string;
+  hsk?: string;
   defs?: string[];
   source?: string;
   notFound?: boolean;
@@ -25,13 +29,12 @@ interface PopupState {
   data?: DictData;
 }
 
-const CJK = /[㐀-鿿豈-﫿]/;
+const CJK = /[㐀-䶿一-鿿豈-﫿]/;
 const KANA = /[぀-ヿ]/;
 const EURO_CHAR = /[\p{L}\p{M}'’-]/u;
 
 const cache = new Map<string, DictData>();
 
-// Ambil posisi teks di bawah kursor/jari (lintas browser).
 function caretAt(x: number, y: number): { node: Text; offset: number } | null {
   const d = document as any;
   if (d.caretRangeFromPoint) {
@@ -46,7 +49,7 @@ function caretAt(x: number, y: number): { node: Text; offset: number } | null {
   return null;
 }
 
-/** Bungkus isi artikel: tap/hover kata → popup arti (English). */
+/** Bungkus isi artikel: tap/hover kata → popup arti, dengar, simpan. */
 export default function TapDict({
   lang,
   children,
@@ -54,15 +57,56 @@ export default function TapDict({
   lang: string;
   children: ReactNode;
 }) {
-  const { t } = useSettings();
-  const boxRef = useRef<HTMLDivElement>(null);
+  const { t, ttsRate } = useSettings();
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [popup, setPopup] = useState<PopupState | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [stroke, setStroke] = useState<string | null>(null);
 
   const isCjkLang = lang === "zh" || lang === "ja";
 
+  const runLookup = useCallback(
+    async (key: string, params: string, px: number, py: number) => {
+      const cached = cache.get(key);
+      if (cached) {
+        setPopup({ x: px, y: py, status: "done", data: cached });
+        setSaved(cached.word ? isSaved(cached.word) : false);
+        return;
+      }
+      setPopup({ x: px, y: py, status: "loading" });
+      try {
+        const res = await fetch(`/api/dict?${params}`);
+        const data: DictData = res.ok ? await res.json() : { notFound: true };
+        cache.set(key, data);
+        setSaved(data.word ? isSaved(data.word) : false);
+        setPopup((p) => (p ? { ...p, status: "done", data } : null));
+      } catch {
+        setPopup((p) =>
+          p ? { ...p, status: "done", data: { notFound: true } } : null
+        );
+      }
+    },
+    []
+  );
+
   const lookup = useCallback(
-    async (clientX: number, clientY: number) => {
+    async (clientX: number, clientY: number, target?: HTMLElement) => {
+      const px = Math.min(clientX, window.innerWidth - 300);
+      const py = Math.min(clientY + 18, window.innerHeight - 220);
+
+      // 1) Kata sudah tersegmentasi (pinyin ruby) → pakai langsung
+      const tokEl = target?.closest?.("[data-w]") as HTMLElement | null;
+      if (tokEl?.dataset.w) {
+        const w = tokEl.dataset.w;
+        return runLookup(
+          `${lang}:${w}`,
+          `lang=${lang}&ctx=${encodeURIComponent(w)}`,
+          px,
+          py
+        );
+      }
+
+      // 2) Deteksi dari posisi kursor/jari
       const caret = caretAt(clientX, clientY);
       if (!caret) return;
       const text = caret.node.textContent || "";
@@ -70,7 +114,6 @@ export default function TapDict({
       let params = "";
 
       if (isCjkLang) {
-        // mundur 1 kalau jatuh tepat setelah karakter
         let i = caret.offset;
         if (i >= text.length || !(CJK.test(text[i]) || KANA.test(text[i]))) {
           i = Math.max(0, i - 1);
@@ -81,7 +124,6 @@ export default function TapDict({
         key = `${lang}:${ctx}`;
         params = `lang=${lang}&ctx=${encodeURIComponent(ctx)}`;
       } else {
-        // Eropa: perluas ke batas kata
         let s = caret.offset;
         if (s >= text.length || !EURO_CHAR.test(text[s])) s = Math.max(0, s - 1);
         if (!EURO_CHAR.test(text[s] || "")) return;
@@ -93,49 +135,30 @@ export default function TapDict({
         key = `${lang}:${word.toLowerCase()}`;
         params = `lang=${lang}&word=${encodeURIComponent(word)}`;
       }
-
-      const px = Math.min(clientX, window.innerWidth - 300);
-      const py = Math.min(clientY + 18, window.innerHeight - 180);
-
-      const cached = cache.get(key);
-      if (cached) {
-        setPopup({ x: px, y: py, status: "done", data: cached });
-        return;
-      }
-      setPopup({ x: px, y: py, status: "loading" });
-      try {
-        const res = await fetch(`/api/dict?${params}`);
-        const data: DictData = res.ok ? await res.json() : { notFound: true };
-        cache.set(key, data);
-        setPopup((p) =>
-          p ? { ...p, status: "done", data } : null
-        );
-      } catch {
-        setPopup((p) =>
-          p ? { ...p, status: "done", data: { notFound: true } } : null
-        );
-      }
+      return runLookup(key, params, px, py);
     },
-    [lang, isCjkLang]
+    [lang, isCjkLang, runLookup]
   );
+
+  function skip(el: HTMLElement) {
+    return !!el.closest("a, code, pre, iframe, img, button, .dict-popup");
+  }
 
   function onClick(e: React.MouseEvent) {
     const el = e.target as HTMLElement;
-    if (el.closest("a, code, pre, iframe, img, button")) return;
-    lookup(e.clientX, e.clientY);
+    if (skip(el)) return;
+    lookup(e.clientX, e.clientY, el);
   }
 
   function onMouseMove(e: React.MouseEvent) {
-    // hover-intent hanya untuk perangkat berkursor
     if (!window.matchMedia("(pointer: fine)").matches) return;
     if (hoverTimer.current) clearTimeout(hoverTimer.current);
-    const { clientX, clientY, target } = e;
-    if ((target as HTMLElement).closest("a, code, pre, iframe, img, button"))
-      return;
-    hoverTimer.current = setTimeout(() => lookup(clientX, clientY), 550);
+    const { clientX, clientY } = e;
+    const el = e.target as HTMLElement;
+    if (skip(el)) return;
+    hoverTimer.current = setTimeout(() => lookup(clientX, clientY, el), 550);
   }
 
-  // Tutup popup saat klik di luar / scroll / Esc
   useEffect(() => {
     if (!popup) return;
     const close = () => setPopup(null);
@@ -148,9 +171,27 @@ export default function TapDict({
     };
   }, [popup]);
 
+  const d = popup?.data;
+
+  function toggleSave() {
+    if (!d?.word || !d.defs) return;
+    if (saved) {
+      removeWord(d.word);
+      setSaved(false);
+    } else {
+      addWord({
+        w: d.word,
+        p: d.reading,
+        d: d.defs.slice(0, 2).join("; "),
+        h: d.hsk,
+        lang,
+      });
+      setSaved(true);
+    }
+  }
+
   return (
     <div
-      ref={boxRef}
       onClick={onClick}
       onMouseMove={onMouseMove}
       onMouseLeave={() => {
@@ -167,35 +208,65 @@ export default function TapDict({
         >
           {popup.status === "loading" ? (
             <p className="text-sm text-gray-500">{t("post.dict.loading")}</p>
-          ) : popup.data?.notFound || !popup.data?.defs ? (
+          ) : d?.notFound || !d?.defs ? (
             <p className="text-sm text-gray-500">{t("post.dict.notFound")}</p>
           ) : (
             <>
-              <p className="text-base font-bold leading-snug">
-                {popup.data.word}
-                {popup.data.alt && (
-                  <span className="ml-1.5 font-normal text-gray-400">
-                    ({popup.data.alt})
+              <p className="flex flex-wrap items-center gap-x-2 text-base font-bold leading-snug">
+                {d.word}
+                {d.alt && (
+                  <span className="font-normal text-gray-400">({d.alt})</span>
+                )}
+                {d.hsk && (
+                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-medium text-accent">
+                    {d.hsk}
                   </span>
                 )}
               </p>
-              {popup.data.reading && (
-                <p className="mt-0.5 text-sm text-accent">
-                  {popup.data.reading}
-                </p>
+              {d.reading && (
+                <p className="mt-0.5 text-sm text-accent">{d.reading}</p>
               )}
               <ul className="mt-1.5 space-y-0.5 text-sm text-gray-700 dark:text-gray-300">
-                {popup.data.defs.slice(0, 4).map((d, i) => (
-                  <li key={i}>• {d}</li>
+                {d.defs.slice(0, 4).map((def, i) => (
+                  <li key={i}>• {def}</li>
                 ))}
               </ul>
-              <p className="mt-2 text-[10px] text-gray-400">
-                {popup.data.source}
-              </p>
+
+              <div className="mt-2.5 flex flex-wrap items-center gap-1.5 border-t border-gray-100 pt-2 dark:border-gray-800">
+                <button
+                  onClick={() =>
+                    d.word && speak(d.word, lang, { rate: ttsRate })
+                  }
+                  className="rounded-md border border-gray-200 px-2 py-1 text-xs transition-colors hover:border-accent hover:text-accent dark:border-gray-700"
+                >
+                  🔊 {t("post.dict.listen")}
+                </button>
+                <button
+                  onClick={toggleSave}
+                  className={`rounded-md border px-2 py-1 text-xs transition-colors ${
+                    saved
+                      ? "border-accent text-accent"
+                      : "border-gray-200 hover:border-accent hover:text-accent dark:border-gray-700"
+                  }`}
+                >
+                  {saved ? `✓ ${t("post.dict.saved")}` : `＋ ${t("post.dict.save")}`}
+                </button>
+                {lang === "zh" && d.word && (
+                  <button
+                    onClick={() => setStroke(d.word!)}
+                    className="rounded-md border border-gray-200 px-2 py-1 text-xs transition-colors hover:border-accent hover:text-accent dark:border-gray-700"
+                  >
+                    ✍️ {t("post.dict.strokes")}
+                  </button>
+                )}
+              </div>
+              <p className="mt-2 text-[10px] text-gray-400">{d.source}</p>
             </>
           )}
         </div>
       )}
+
+      {stroke && <StrokeOrder word={stroke} onClose={() => setStroke(null)} />}
     </div>
   );
 }
