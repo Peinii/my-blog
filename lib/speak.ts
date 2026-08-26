@@ -58,10 +58,30 @@ export function speak(
   synth.speak(u);
 }
 
-/** Pecah teks jadi kalimat (mendukung tanda baca CJK). */
+/**
+ * Pecah teks jadi kalimat (mendukung tanda baca CJK).
+ * Sengaja tanpa lookbehind regex agar tetap jalan di Safari lama.
+ */
+const CJK_END = "。！？；…";
+const LATIN_END = ".!?;";
 export function splitSentences(text: string): string[] {
-  return text
-    .split(/(?<=[。！？!?；;…])\s*|(?<=[.!?])\s+/u)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
+  const out: string[] = [];
+  let buf = "";
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    buf += ch;
+    const cjkEnd = CJK_END.indexOf(ch) >= 0;
+    // titik/tanya/seru latin hanya memotong bila diikuti spasi atau akhir teks
+    const latinEnd =
+      LATIN_END.indexOf(ch) >= 0 &&
+      (i + 1 >= text.length || /\s/.test(text[i + 1]));
+    if (cjkEnd || latinEnd) {
+      const t = buf.trim();
+      if (t) out.push(t);
+      buf = "";
+    }
+  }
+  const rest = buf.trim();
+  if (rest) out.push(rest);
+  return out;
 }
