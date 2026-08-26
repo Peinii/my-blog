@@ -141,7 +141,9 @@ export default function TapDict({
   );
 
   function skip(el: HTMLElement) {
-    return !!el.closest("a, code, pre, iframe, img, button, .dict-popup");
+    return !!el.closest(
+      "a, code, pre, iframe, img, button, .dict-popup, .stroke-backdrop"
+    );
   }
 
   function onClick(e: React.MouseEvent) {

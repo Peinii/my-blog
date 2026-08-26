@@ -10,33 +10,45 @@ export interface Token {
   h?: string;
 }
 
-// cache antar-komponen supaya paragraf yang sama tidak diminta dua kali
+// Cache + penggabungan permintaan: semua paragraf yang muncul dalam
+// jendela 40 ms dikirim dalam SATU permintaan ke /api/annotate.
 const cache = new Map<string, Token[]>();
-const inflight = new Map<string, Promise<Token[]>>();
+type Waiter = { text: string; resolve: (t: Token[]) => void };
+let pending: Waiter[] = [];
+let timer: ReturnType<typeof setTimeout> | null = null;
 
-async function fetchTokens(text: string): Promise<Token[]> {
-  const hit = cache.get(text);
-  if (hit) return hit;
-  const running = inflight.get(text);
-  if (running) return running;
-  const p = fetch("/api/annotate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text }),
-  })
-    .then((r) => (r.ok ? r.json() : { tokens: [] }))
-    .then((d) => {
-      const toks: Token[] = d?.tokens ?? [];
-      cache.set(text, toks);
-      inflight.delete(text);
-      return toks;
-    })
-    .catch(() => {
-      inflight.delete(text);
-      return [] as Token[];
+async function flush() {
+  const batch = pending;
+  pending = [];
+  timer = null;
+  const texts = Array.from(new Set(batch.map((b) => b.text)));
+  try {
+    const res = await fetch("/api/annotate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texts }),
     });
-  inflight.set(text, p);
-  return p;
+    const data = res.ok ? await res.json() : null;
+    const results: Token[][] = data?.results ?? [];
+    const map = new Map<string, Token[]>();
+    texts.forEach((t, i) => map.set(t, results[i] ?? []));
+    for (const w of batch) {
+      const toks = map.get(w.text) ?? [];
+      if (toks.length) cache.set(w.text, toks);
+      w.resolve(toks);
+    }
+  } catch {
+    batch.forEach((w) => w.resolve([]));
+  }
+}
+
+function fetchTokens(text: string): Promise<Token[]> {
+  const hit = cache.get(text);
+  if (hit) return Promise.resolve(hit);
+  return new Promise<Token[]>((resolve) => {
+    pending.push({ text, resolve });
+    if (!timer) timer = setTimeout(flush, 40);
+  });
 }
 
 /**

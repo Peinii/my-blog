@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { urlFor } from "@/lib/sanity.client";
 import { canvaEmbedUrl, isCanvaShortLink } from "@/lib/canva";
@@ -90,7 +90,7 @@ export default function PostBody({
     };
   }
 
-  const components: PortableTextComponents = {
+  const components: PortableTextComponents = useMemo(() => ({
     block: {
       normal: wrap("p"),
       h2: wrap("h2"),
@@ -149,7 +149,8 @@ export default function PostBody({
         </pre>
       ),
     },
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [annotate, pinyin, script]);
 
   return (
     <div className="prose-article">

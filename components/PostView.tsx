@@ -32,6 +32,8 @@ export default function PostView({
 
   const learning = !!post.language && post.language !== "en";
   const isZh = post.language === "zh";
+  // minta anotasi hanya bila memang dipakai (hemat kuota fungsi)
+  const needAnnotate = isZh && (pinyin || script === "trad");
   const speakBlocks = (post.body || [])
     .filter((b: any) => b?._type === "block")
     .map((b: any) => ({ key: b._key as string, text: blockText(b) }))
@@ -136,7 +138,7 @@ export default function PostView({
                   {post.body && (
                     <PostBody
                       body={post.body}
-                      annotate={isZh}
+                      annotate={needAnnotate}
                       pinyin={isZh && pinyin}
                       script={script}
                     />
@@ -148,7 +150,7 @@ export default function PostView({
                 {post.body && (
                   <PostBody
                     body={post.body}
-                    annotate={isZh}
+                    annotate={needAnnotate}
                     pinyin={isZh && pinyin}
                     script={script}
                   />
