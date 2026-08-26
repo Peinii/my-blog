@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { lookupZh, lookupJa, lookupEuro, diagnose } from "@/lib/dict-server";
+import {
+  lookupZh,
+  lookupJa,
+  lookupEuro,
+  diagnose,
+  hskLevel,
+  pinyinPretty,
+} from "@/lib/dict-server";
 
 // Kamus sentuh: /api/dict?lang=zh&ctx=汉字…  |  ?lang=de&word=Haus
 // Cek kesehatan: /api/dict?diag=1
@@ -20,7 +27,16 @@ export async function GET(req: NextRequest) {
   try {
     if (lang === "zh" && ctx) {
       const r = await lookupZh(ctx);
-      return NextResponse.json(r ?? { notFound: true }, { headers });
+      if (!r) return NextResponse.json({ notFound: true }, { headers });
+      // pinyin bertanda nada + label HSK untuk popup
+      const pretty = r.reading
+        ? r.reading.split(" / ").map(pinyinPretty).join(" / ")
+        : undefined;
+      const hsk = await hskLevel(r.word);
+      return NextResponse.json(
+        { ...r, reading: pretty ?? r.reading, hsk },
+        { headers }
+      );
     }
     if (lang === "ja" && ctx) {
       const r = await lookupJa(ctx);
