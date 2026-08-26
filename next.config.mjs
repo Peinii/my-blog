@@ -9,6 +9,8 @@ const nextConfig = {
     outputFileTracingIncludes: {
       "/api/dict": ["./public/dict/**"],
       "/api/dict/route": ["./public/dict/**"],
+      "/api/annotate": ["./public/dict/**"],
+      "/api/annotate/route": ["./public/dict/**"],
     },
   },
 };
