@@ -31,6 +31,7 @@ export type EnFont =
   | "parisienne";
 export type Theme = "classic" | "sakura" | "matcha" | "midnight" | "ocean";
 export type UiStyle = "flat" | "clay" | "glass" | "brutal" | "neu";
+export type Script = "simp" | "trad";
 export type { PetType } from "./pets";
 import type { PetType } from "./pets";
 
@@ -49,6 +50,9 @@ interface Settings {
   dictEnabled: boolean;
   fancyFx: boolean;
   uiStyle: UiStyle;
+  pinyin: boolean;
+  script: Script;
+  ttsRate: number;
 }
 
 interface SettingsCtx extends Settings {
@@ -69,6 +73,9 @@ interface SettingsCtx extends Settings {
   setDictEnabled: (d: boolean) => void;
   setFancyFx: (f: boolean) => void;
   setUiStyle: (u: UiStyle) => void;
+  setPinyin: (p: boolean) => void;
+  setScript: (s: Script) => void;
+  setTtsRate: (r: number) => void;
   setPetColor: (c: string) => void;
   reset: () => void;
 }
@@ -88,6 +95,9 @@ const DEFAULTS: Settings = {
   dictEnabled: true,
   fancyFx: true,
   uiStyle: "flat",
+  pinyin: false,
+  script: "simp",
+  ttsRate: 0.8,
 };
 const STORAGE_KEY = "peini-settings";
 
@@ -109,6 +119,9 @@ const Ctx = createContext<SettingsCtx>({
   setDictEnabled: () => {},
   setFancyFx: () => {},
   setUiStyle: () => {},
+  setPinyin: () => {},
+  setScript: () => {},
+  setTtsRate: () => {},
   setPetColor: () => {},
   reset: () => {},
 });
@@ -196,6 +209,9 @@ export function SettingsProvider({
     setDictEnabled: (dictEnabled) => update({ dictEnabled }),
     setFancyFx: (fancyFx) => update({ fancyFx }),
     setUiStyle: (uiStyle) => update({ uiStyle }),
+    setPinyin: (pinyin) => update({ pinyin }),
+    setScript: (script) => update({ script }),
+    setTtsRate: (ttsRate) => update({ ttsRate }),
     setPetColor: (petColor) => update({ petColor }),
     reset: () => update({ ...DEFAULTS }),
   };

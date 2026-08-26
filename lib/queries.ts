@@ -17,6 +17,7 @@ export interface Post {
   authorName?: string;
   body?: any[];
   language?: string;
+  audioUrl?: string;
 }
 
 const postFields = groq`{
@@ -58,6 +59,7 @@ export async function getPost(slug: string): Promise<Post | null> {
     return await client.fetch(
       groq`*[_type == "post" && slug.current == $slug && publishedAt <= now()][0]{
         _id, title, "slug": slug.current, excerpt, coverImage, publishedAt, language,
+        "audioUrl": audio.asset->url,
         "tags": tags[]->{name, "slug": slug.current},
         "authorName": author->name,
         body

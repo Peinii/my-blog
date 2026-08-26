@@ -226,3 +226,147 @@ export async function lookupEuro(
   }
   return null;
 }
+
+// ============ v2.0.0 Learning Mode ============
+
+// ---------- pinyin bernomor (ka1 fei1) -> tanda nada (kā fēi) ----------
+const TONE_MARKS: Record<string, string[]> = {
+  a: ["ā", "á", "ǎ", "à"],
+  e: ["ē", "é", "ě", "è"],
+  i: ["ī", "í", "ǐ", "ì"],
+  o: ["ō", "ó", "ǒ", "ò"],
+  u: ["ū", "ú", "ǔ", "ù"],
+  "ü": ["ǖ", "ǘ", "ǚ", "ǜ"],
+};
+
+export function pinyinSyllable(raw: string): string {
+  let s = raw.trim();
+  if (!s) return "";
+  const m = s.match(/^([A-Za-zü:]+)([0-5])?$/);
+  if (!m) return s;
+  let body = m[1];
+  const tone = m[2] ? parseInt(m[2], 10) : 0;
+  body = body.replace(/u:/g, "ü").replace(/v/g, "ü").replace(/U:/g, "Ü");
+  if (tone < 1 || tone > 4) return body;
+
+  const lower = body.toLowerCase();
+  let idx = -1;
+  if (lower.includes("a")) idx = lower.indexOf("a");
+  else if (lower.includes("e")) idx = lower.indexOf("e");
+  else if (lower.includes("ou")) idx = lower.indexOf("o");
+  else {
+    for (let i = lower.length - 1; i >= 0; i--) {
+      if ("aeiouü".includes(lower[i])) {
+        idx = i;
+        break;
+      }
+    }
+  }
+  if (idx < 0) return body;
+  const vowel = lower[idx];
+  const marked = TONE_MARKS[vowel]?.[tone - 1];
+  if (!marked) return body;
+  const isUpper = body[idx] !== lower[idx];
+  return (
+    body.slice(0, idx) +
+    (isUpper ? marked.toUpperCase() : marked) +
+    body.slice(idx + 1)
+  );
+}
+
+export function pinyinPretty(numbered: string): string {
+  return numbered
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(pinyinSyllable)
+    .join(" ");
+}
+
+// ---------- HSK ----------
+let hskPromise: Promise<Map<string, string>> | null = null;
+
+function getHsk(): Promise<Map<string, string>> {
+  if (!hskPromise) {
+    hskPromise = loadTsv("hsk.tsv.gz")
+      .then((t) => {
+        const m = new Map<string, string>();
+        for (const line of t.split("\n")) {
+          const i = line.indexOf("\t");
+          if (i > 0) m.set(line.slice(0, i), line.slice(i + 1));
+        }
+        return m;
+      })
+      .catch(() => new Map<string, string>()); // HSK opsional
+  }
+  return hskPromise;
+}
+
+// ---------- segmentasi + anotasi ----------
+export interface Token {
+  /** teks apa adanya (sesuai sumber) */
+  w: string;
+  /** bentuk sederhana (kalau berbeda) */
+  s?: string;
+  /** bentuk tradisional (kalau berbeda) */
+  t?: string;
+  /** pinyin bertanda nada */
+  p?: string;
+  /** label HSK, mis. "HSK3" */
+  h?: string;
+}
+
+const CJK_RE = /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/;
+
+export async function annotate(text: string): Promise<Token[]> {
+  const dict = await getZh();
+  const hsk = await getHsk();
+  const out: Token[] = [];
+  let plain = "";
+
+  const flush = () => {
+    if (plain) {
+      out.push({ w: plain });
+      plain = "";
+    }
+  };
+
+  let i = 0;
+  while (i < text.length) {
+    const ch = text[i];
+    if (!CJK_RE.test(ch)) {
+      plain += ch;
+      i++;
+      continue;
+    }
+    flush();
+    let matched = false;
+    const maxLen = Math.min(8, text.length - i);
+    for (let len = maxLen; len >= 1; len--) {
+      const cand = text.slice(i, i + len);
+      const lines = dict.get(cand);
+      if (!lines) continue;
+      const [simp, trad, py] = lines[0].split("\t");
+      const tok: Token = { w: cand, p: pinyinPretty(py) };
+      if (simp !== cand) tok.s = simp;
+      if (trad !== cand) tok.t = trad;
+      const level = hsk.get(cand) || hsk.get(simp);
+      if (level) tok.h = level;
+      out.push(tok);
+      i += len;
+      matched = true;
+      break;
+    }
+    if (!matched) {
+      out.push({ w: ch });
+      i++;
+    }
+  }
+  flush();
+  return out;
+}
+
+/** Cari label HSK satu kata (dipakai popup kamus). */
+export async function hskLevel(word: string): Promise<string | undefined> {
+  const hsk = await getHsk();
+  return hsk.get(word);
+}
