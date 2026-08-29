@@ -21,6 +21,33 @@ export const post = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: "shareToken",
+      title: "Share link (situs terpisah)",
+      description:
+        "KOSONG = artikel ini tidak bisa dibagikan lewat situs share. Klik Generate untuk membuat kode acak, lalu bagikan alamat: https://NAMA-SITUS-SHARE.vercel.app/s/KODE — penerima hanya melihat artikel ini, tanpa jalan ke artikel lain. Hapus isinya kapan saja untuk mematikan link yang sudah tersebar.",
+      type: "slug",
+      options: {
+        // Tombol Generate membuat kode acak; judul sengaja TIDAK dipakai
+        // agar alamatnya tidak bisa ditebak dari nama artikel.
+        // 14 karakter dari 32 huruf/angka = ~10^21 kemungkinan.
+        // Huruf yang mudah tertukar (0/O, 1/l/I) sengaja dibuang supaya
+        // kodenya masih aman dibacakan lewat telepon.
+        source: () => {
+          const chars = "abcdefghijkmnpqrstuvwxyz23456789";
+          let out = "";
+          for (let i = 0; i < 14; i++) {
+            out += chars[Math.floor(Math.random() * chars.length)];
+          }
+          return out;
+        },
+        slugify: (input: string) =>
+          input
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "")
+            .slice(0, 32),
+      },
+    }),
+    defineField({
       name: "coverImage",
       title: "Cover Image",
       type: "image",
