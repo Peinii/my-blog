@@ -16,9 +16,13 @@ import type { Post } from "@/lib/queries";
 export default function PostView({
   post,
   minutes,
+  bare = false,
 }: {
   post: Post;
   minutes?: number;
+  /** Mode bersih untuk halaman share: tanpa tautan kembali & tombol share,
+   *  sehingga tidak ada satu pun jalan menuju artikel lain. */
+  bare?: boolean;
 }) {
   const {
     t,
@@ -48,12 +52,14 @@ export default function PostView({
 
   return (
     <article className="mx-auto max-w-content">
-      <Link
-        href="/blog"
-        className="text-sm font-medium text-accent transition-opacity hover:opacity-75"
-      >
-        ← {t("post.back")}
-      </Link>
+      {!bare && (
+        <Link
+          href="/blog"
+          className="text-sm font-medium text-accent transition-opacity hover:opacity-75"
+        >
+          ← {t("post.back")}
+        </Link>
+      )}
 
       <Reveal>
         <header className="mt-6">
@@ -164,7 +170,7 @@ export default function PostView({
           </div>
         )}
 
-        <ShareButtons slug={post.slug} title={post.title} />
+        {!bare && <ShareButtons slug={post.slug} title={post.title} />}
       </Reveal>
     </article>
   );

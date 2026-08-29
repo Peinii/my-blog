@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSettings } from "@/lib/settings-context";
 import { LANGS, type Lang } from "@/lib/i18n";
+import { SHARE_MODE } from "@/lib/site-mode";
 
 export default function Navbar() {
   const { t, ct, content, lang, mode, setLang, setMode } = useSettings();
@@ -16,8 +17,11 @@ export default function Navbar() {
     setOpen(false);
   }, [pathname]);
 
-  // Sembunyikan navbar di halaman admin /studio
-  if (pathname?.startsWith("/studio")) return null;
+  // Sembunyikan navbar di halaman admin /studio, di halaman share /s/…,
+  // dan di seluruh deployment mode share — termasuk halaman 404-nya,
+  // supaya tidak ada nama situs atau tautan yang membocorkan blog utama.
+  if (SHARE_MODE || pathname?.startsWith("/studio") || pathname?.startsWith("/s/"))
+    return null;
 
   const links = [
     { href: "/", label: t("nav.home") },
