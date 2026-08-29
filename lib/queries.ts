@@ -71,6 +71,31 @@ export async function getPost(slug: string): Promise<Post | null> {
   }
 }
 
+/**
+ * Artikel yang dibagikan lewat situs share.
+ *
+ * Dicari dari field shareToken, BUKAN dari slug — jadi tidak ada cara
+ * menebak alamatnya dari judul artikel. Mengosongkan field itu di Studio
+ * langsung mematikan link yang sudah terlanjur disebar.
+ */
+export async function getPostByShareToken(token: string): Promise<Post | null> {
+  if (!token || token.length < 6) return null;
+  try {
+    return await client.fetch(
+      groq`*[_type == "post" && shareToken.current == $token && publishedAt <= now()][0]{
+        _id, title, "slug": slug.current, excerpt, coverImage, publishedAt, language,
+        "audioUrl": audio.asset->url,
+        "tags": tags[]->{name, "slug": slug.current},
+        "authorName": author->name,
+        body
+      }`,
+      { token }
+    );
+  } catch {
+    return null;
+  }
+}
+
 // Artikel dengan tag yang sama (untuk "You might also like").
 // Kalau tidak ada yang cocok, isi dengan artikel terbaru lain.
 export async function getRelatedPosts(
