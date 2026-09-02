@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import ShareLinkInput from "../components/ShareLinkInput";
 
 export const post = defineType({
   name: "post",
@@ -26,6 +27,8 @@ export const post = defineType({
       description:
         "KOSONG = artikel ini tidak bisa dibagikan lewat situs share. Klik Generate untuk membuat kode acak, lalu bagikan alamat: https://NAMA-SITUS-SHARE.vercel.app/s/KODE — penerima hanya melihat artikel ini, tanpa jalan ke artikel lain. Hapus isinya kapan saja untuk mematikan link yang sudah tersebar.",
       type: "slug",
+      // Tampilkan URL lengkap + tombol salin di bawah field ini.
+      components: { input: ShareLinkInput },
       options: {
         // Tombol Generate membuat kode acak; judul sengaja TIDAK dipakai
         // agar alamatnya tidak bisa ditebak dari nama artikel.
