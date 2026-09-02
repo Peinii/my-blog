@@ -48,6 +48,8 @@ interface Settings {
   enFont: EnFont;
   theme: Theme;
   dictEnabled: boolean;
+  /** Tampilkan kotak share link di halaman artikel (hanya untuk pemilik). */
+  showShareLinks: boolean;
   fancyFx: boolean;
   uiStyle: UiStyle;
   pinyin: boolean;
@@ -71,6 +73,7 @@ interface SettingsCtx extends Settings {
   setEnFont: (f: EnFont) => void;
   setTheme: (t: Theme) => void;
   setDictEnabled: (d: boolean) => void;
+  setShowShareLinks: (v: boolean) => void;
   setFancyFx: (f: boolean) => void;
   setUiStyle: (u: UiStyle) => void;
   setPinyin: (p: boolean) => void;
@@ -93,6 +96,9 @@ const DEFAULTS: Settings = {
   enFont: "default",
   theme: "classic",
   dictEnabled: true,
+  // Bawaan MATI: kalau menyala, pengunjung blog ikut melihat bahwa
+  // situs share itu ada.
+  showShareLinks: false,
   fancyFx: true,
   uiStyle: "flat",
   pinyin: false,
@@ -117,6 +123,7 @@ const Ctx = createContext<SettingsCtx>({
   setEnFont: () => {},
   setTheme: () => {},
   setDictEnabled: () => {},
+  setShowShareLinks: () => {},
   setFancyFx: () => {},
   setUiStyle: () => {},
   setPinyin: () => {},
@@ -207,6 +214,7 @@ export function SettingsProvider({
     setEnFont: (enFont) => update({ enFont }),
     setTheme: (theme) => update({ theme }),
     setDictEnabled: (dictEnabled) => update({ dictEnabled }),
+    setShowShareLinks: (showShareLinks) => update({ showShareLinks }),
     setFancyFx: (fancyFx) => update({ fancyFx }),
     setUiStyle: (uiStyle) => update({ uiStyle }),
     setPinyin: (pinyin) => update({ pinyin }),
