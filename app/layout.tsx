@@ -3,6 +3,7 @@ import "./globals.css";
 import { SettingsProvider } from "@/lib/settings-context";
 import { getSiteContent } from "@/lib/site-content";
 import { siteUrl } from "@/lib/sanity.env";
+import { SHARE_MODE } from "@/lib/site-mode";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Pet from "@/components/Pet";
@@ -19,7 +20,22 @@ export const viewport: Viewport = {
   themeColor: "#4361ee",
 };
 
-export const metadata: Metadata = {
+// Di mode share, layout induk TIDAK boleh menyumbang identitas apa pun.
+// Tanpa ini, kartu preview link (WhatsApp/Slack/Twitter) tetap menampilkan
+// "Peini's Blog" beserta deskripsi dan gambar blog utama — bocor sebelum
+// halamannya dibuka.
+const shareMetadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: { default: "Shared document", template: "%s" },
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: { index: false, follow: false },
+  },
+};
+
+const fullMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: "Peini's Blog",
@@ -51,6 +67,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const metadata: Metadata = SHARE_MODE ? shareMetadata : fullMetadata;
+
 // Script kecil ini berjalan sebelum halaman digambar,
 // supaya dark mode & warna tema tidak "berkedip" saat dibuka.
 const themeInit = `
@@ -78,7 +96,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const siteContent = await getSiteContent();
+  // Di mode share, JANGAN ambil Site Settings. Meski Navbar & Footer tidak
+  // dirender, isinya (nama blog, teks About, hero title) tetap ikut terkirim
+  // ke browser di dalam data halaman dan terbaca lewat "view source".
+  const siteContent = SHARE_MODE ? null : await getSiteContent();
   return (
     <html lang="en" data-accent="blue" suppressHydrationWarning>
       <head>
