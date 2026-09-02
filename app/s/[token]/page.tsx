@@ -18,11 +18,23 @@ export async function generateMetadata({
   params: { token: string };
 }): Promise<Metadata> {
   const post = await getPostByShareToken(params.token);
+  const title = post ? post.title : "Not found";
+  // openGraph & twitter ditulis ulang secara eksplisit — kalau dibiarkan
+  // kosong, Next mewarisi milik layout induk dan app/opengraph-image.tsx,
+  // sehingga kartu preview link di WhatsApp/Slack menampilkan nama serta
+  // gambar blog utama. images: [] mematikan warisan gambar itu.
   return {
     // Judul saja — tanpa template "· Peini's Blog", supaya halaman ini
     // tidak menunjukkan bahwa ada blog lain di baliknya.
-    title: post ? { absolute: post.title } : { absolute: "Not found" },
+    title: { absolute: title },
     description: post?.excerpt,
+    openGraph: {
+      title,
+      description: post?.excerpt,
+      type: "article",
+      images: [],
+    },
+    twitter: { card: "summary", title, description: post?.excerpt, images: [] },
     robots: { index: false, follow: false, nocache: true },
   };
 }
