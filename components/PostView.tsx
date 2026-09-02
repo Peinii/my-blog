@@ -11,6 +11,7 @@ import AudioPlayer from "./AudioPlayer";
 import Reveal from "./Reveal";
 import ShareButtons from "./ShareButtons";
 import TapDict from "./TapDict";
+import ShareLinkBox from "./ShareLinkBox";
 import type { Post } from "@/lib/queries";
 
 export default function PostView({
@@ -171,6 +172,10 @@ export default function PostView({
         )}
 
         {!bare && <ShareButtons slug={post.slug} title={post.title} />}
+        {/* Kotak salin link share — tersembunyi kecuali diaktifkan di Settings.
+            Tidak pernah dirender di halaman /s/ (bare), supaya penerima link
+            tidak melihat link itu sendiri terpampang. */}
+        {!bare && <ShareLinkBox token={post.shareToken} />}
       </Reveal>
     </article>
   );

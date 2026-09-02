@@ -55,6 +55,8 @@ export default function SettingsContent() {
     enFont,
     theme,
     dictEnabled,
+    showShareLinks,
+    setShowShareLinks,
     setDictEnabled,
     fancyFx,
     setFancyFx,
@@ -353,6 +355,27 @@ export default function SettingsContent() {
               <button
                 onClick={() => setDictEnabled(false)}
                 className={btn(!dictEnabled)}
+              >
+                {t("settings.pet.off")}
+              </button>
+            </div>
+          </Section>
+
+          {/* Link share (hanya untuk pemilik) */}
+          <Section
+            title={t("settings.share")}
+            desc={t("settings.share.desc")}
+          >
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setShowShareLinks(true)}
+                className={btn(showShareLinks)}
+              >
+                🔗 {t("settings.pet.on")}
+              </button>
+              <button
+                onClick={() => setShowShareLinks(false)}
+                className={btn(!showShareLinks)}
               >
                 {t("settings.pet.off")}
               </button>
