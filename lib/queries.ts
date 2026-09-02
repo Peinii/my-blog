@@ -82,14 +82,18 @@ export async function getPostByShareToken(token: string): Promise<Post | null> {
   if (!token || token.length < 6) return null;
   try {
     return await client.fetch(
-      groq`*[_type == "post" && shareToken.current == $token && publishedAt <= now()][0]{
+      // Parameter GROQ-nya bernama $code, BUKAN $token: di tipe QueryParams
+      // milik @sanity/client, kunci "token" sengaja dilarang (bertipe never)
+      // agar orang tidak keliru mengirim token autentikasi sebagai parameter
+      // query. Memakai $token membuat build gagal dengan error TS2769.
+      groq`*[_type == "post" && shareToken.current == $code && publishedAt <= now()][0]{
         _id, title, "slug": slug.current, excerpt, coverImage, publishedAt, language,
         "audioUrl": audio.asset->url,
         "tags": tags[]->{name, "slug": slug.current},
         "authorName": author->name,
         body
       }`,
-      { token }
+      { code: token }
     );
   } catch {
     return null;
