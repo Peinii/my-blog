@@ -9,10 +9,9 @@ import ProgressBar from "@/components/ProgressBar";
 // kapan saja lewat Studio, jadi halaman ini selalu dirender saat diminta.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false, nocache: true },
-};
-
+// CATATAN: jangan menambahkan `export const metadata` di file ini.
+// Next.js menolak build bila sebuah route mengekspor `metadata` DAN
+// `generateMetadata` sekaligus. Semua metadata diatur di fungsi di bawah.
 export async function generateMetadata({
   params,
 }: {
